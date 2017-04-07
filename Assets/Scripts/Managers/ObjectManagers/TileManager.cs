@@ -57,7 +57,7 @@ public class TileManager : MonoBehaviour {
         //m_Trigger2 = GameObject.FindGameObjectWithTag("TriggerQuad2");
 
         m_Tile.transform.position = new Vector3(2.2f, 1.3f, 10.0f);
-        m_Trigger.transform.position = new Vector3(2.0f, 1.0f, 10.0f);
+        m_Trigger.transform.position = new Vector3(2.0f, 1.0f, -0.65f);
 
         m_TileList.Add(m_Tile);
         m_TriggerList.Add(m_Trigger);
@@ -68,25 +68,25 @@ public class TileManager : MonoBehaviour {
         // 클론 생성
         // 16 이 스테이지별 타일 갯수를 받아오는 변수로 바뀌어야함
         int floor = 1;
-        for(int i = 0; i < 16; ++i)
+        for(int i = 1; i < 16; ++i)
         {
-            if (i > floor * Math.Sqrt(16))
+            if (i >= floor * Math.Sqrt(16))
             {
-                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i - 4].transform.position.x, m_TileList[i - 4].transform.position.y + height, 10.0f), Quaternion.identity) as GameObject;
-                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i].transform.position.x, m_TriggerList[i - 4].transform.position.y + height, 10.0f), Quaternion.identity) as GameObject;
+                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i - (int)Math.Sqrt(16)].transform.position.x, m_TileList[i - (int)Math.Sqrt(16)].transform.position.y + height, 10.0f), Quaternion.identity) as GameObject;
+                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i- (int)Math.Sqrt(16)].transform.position.x, m_TriggerList[i - (int)Math.Sqrt(16)].transform.position.y + height, -0.65f), Quaternion.identity) as GameObject;
                 floor++;
             }
             else
             {
                 // 다음 타일 좌표
-                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i].transform.position.x + width, m_TileList[i].transform.position.y, 10.0f), Quaternion.identity) as GameObject;
-                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i].transform.position.x + width, m_TriggerList[i].transform.position.y, 10.0f), Quaternion.identity) as GameObject;
+                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i-1].transform.position.x + width, m_TileList[i-1].transform.position.y, 10.0f), Quaternion.identity) as GameObject;
+                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i-1].transform.position.x + width, m_TriggerList[i-1].transform.position.y, -0.65f), Quaternion.identity) as GameObject;
             }
             
 
             m_TileList.Add(TileClone);
             m_TriggerList.Add(TriggerClone);
-            Debug.Log(m_TileList);
+            //Debug.Log(m_TileList);
         }
     }
 
@@ -94,17 +94,13 @@ public class TileManager : MonoBehaviour {
     // Testcase
     private void Player_In_Trigger()
     {
-        if ( m_Trigger.GetComponent<TriggerQuad>().Get_TriggerSwitch() == true )
+        for (int i = 0; i < 16; ++i)
         {
-            m_Tile.GetComponent<Tile>().Set_TileSwitch(true);
-            m_Trigger.GetComponent<TriggerQuad>().Set_TriggerSwitch(false);
+            if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_TriggerSwitch() == true)
+            {
+                m_TileList[i].GetComponent<Tile>().Set_TileSwitch(true);
+                m_TriggerList[i].GetComponent<TriggerQuad>().Set_TriggerSwitch(false);
+            }
         }
-        /*
-        if (m_Trigger2.GetComponent<TriggerQuad>().Get_TriggerSwitch() == true)
-        {
-            m_Tile2.GetComponent<Tile>().Set_TileSwitch(true);
-            m_Trigger2.GetComponent<TriggerQuad>().Set_TriggerSwitch(false);
-        }
-        */
     }
 }
