@@ -15,6 +15,7 @@ TagManager:
   - TileManager
   - TriggerQuad2
   - Tile2
+  - Floor
   layers:
   - Default
   - TransparentFX

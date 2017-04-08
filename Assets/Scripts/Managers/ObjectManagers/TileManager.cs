@@ -16,8 +16,8 @@ public class TileManager : MonoBehaviour {
     GameObject TriggerClone;
 
     // 타일 배치 간격
-    float height = 2.6f;
-    float width = 2.0f;
+    float height = 2.55f;
+    float width = 1.9f;
 
     // 기본 타일 위치
 
