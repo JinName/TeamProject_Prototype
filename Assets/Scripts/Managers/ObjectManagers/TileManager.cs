@@ -53,9 +53,6 @@ public class TileManager : MonoBehaviour {
         m_Tile = GameObject.FindGameObjectWithTag("Tile");
         m_Trigger = GameObject.FindGameObjectWithTag("TriggerQuad");
 
-        //m_Tile2 = GameObject.FindGameObjectWithTag("Tile2");
-        //m_Trigger2 = GameObject.FindGameObjectWithTag("TriggerQuad2");
-
         m_Tile.transform.position = new Vector3(2.2f, 1.3f, 10.0f);
         m_Trigger.transform.position = new Vector3(2.0f, 1.0f, -0.65f);
 

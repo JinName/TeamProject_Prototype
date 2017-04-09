@@ -27,7 +27,6 @@ public class PlayerController : MonoBehaviour {
         coolTime = 1.5f;
         walking = false;
         usePortal = false;
-        //m_iFloormask = LayerMask.GetMask("Floor");
         m_Animator = GetComponent<Animator>();
         m_PlayerRigidbody = GetComponent<Rigidbody>();
     }
@@ -37,7 +36,7 @@ public class PlayerController : MonoBehaviour {
         float m_h = Input.GetAxis("Horizontal");
         //float m_v = Input.GetAxis("Vertical");
 
-        // 캐릭터 이동 - 좌우로테이션이 제대로 작동안함
+        // 캐릭터 이동
         Move(m_h);
 
         // 애니매이션
@@ -87,23 +86,7 @@ public class PlayerController : MonoBehaviour {
         m_vCharPosition = m_vCharPosition * m_fSpeed * Time.deltaTime;
 
         //Debug.Log(m_vCharPosition);
-        if (walking == true)
-        {
-            if (_h < 0f)
-            {
-                //Debug.Log(_h);
-                this.transform.rotation = new Quaternion(0f, 270f, 0f, 0f);
-                //Debug.Log("rotate");
-            }
-            else if (_h > 0f)
-            {
-                //this.transform.rotation = new Quaternion(0f, 90f, 0f, 0f);
-            }
-        }
-        else
-        {
-            this.transform.rotation = new Quaternion(0f, 90f, 0f, 0f);
-        }
+        
         
         // 트랜스폼
         m_PlayerRigidbody.MovePosition(transform.position + m_vCharPosition);
@@ -118,5 +101,23 @@ public class PlayerController : MonoBehaviour {
         walking = _h != 0f;
 
         m_Animator.SetBool("IsWalking", walking);
+
+        if (walking == true)
+        {
+            if (_h < 0f)
+            {
+                //Debug.Log(_h);
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                //Debug.Log("rotate");
+            }
+            else if (_h > 0f)
+            {
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+            }
+        }
+        else
+        {
+            //this.transform.rotation = new Quaternion(0f, 90f, 0f, 0f);
+        }
     }
 }

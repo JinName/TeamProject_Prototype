@@ -30,16 +30,13 @@ public class Tile : MonoBehaviour {
     public void TileRotate()
     {
         rot += 200 * Time.deltaTime;
-        //Debug.Log(rot);
+
         this.transform.eulerAngles = new Vector3(0, rot, 0);
 
         if(this.transform.eulerAngles.y >= 180)
         {
             this.transform.eulerAngles = new Vector3(0, 180, 0);
             m_bRotateSwitch = false;
-            
-            //rot = 0f;
         }
-        //Debug.Log(this.transform.eulerAngles.y);
     }
 }
