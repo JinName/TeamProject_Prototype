@@ -16,6 +16,8 @@ TagManager:
   - TriggerQuad2
   - Tile2
   - Floor
+  - Yellow1
+  - Yellow2
   layers:
   - Default
   - TransparentFX
