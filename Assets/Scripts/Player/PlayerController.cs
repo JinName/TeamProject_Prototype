@@ -48,12 +48,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
     // 플레이어가 포탈 이용한지 체크
-    public bool Get_usePortal() {
-        Debug.Log("Get_usePortal");
-        return usePortal; }
-    public void Set_usePortal(bool _usePortal) {
-        Debug.Log("Set_usePortal");
-        usePortal = _usePortal; }
+    public bool Get_usePortal() { return usePortal; }
+    public void Set_usePortal(bool _usePortal) { usePortal = _usePortal; }
 
     // 플레이어 포탈 쿨타임 업데이트
     private void PortalCoolDown()
@@ -67,7 +63,7 @@ public class PlayerController : MonoBehaviour {
             if (coolTime > 0f)
             {
                 coolTime -= Time.deltaTime;
-                Debug.Log(coolTime);
+                //Debug.Log(coolTime);
                 if (coolTime <= 0f)
                 {
                     usePortal = false;

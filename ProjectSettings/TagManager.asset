@@ -18,6 +18,7 @@ TagManager:
   - Floor
   - Yellow1
   - Yellow2
+  - Enemy
   layers:
   - Default
   - TransparentFX

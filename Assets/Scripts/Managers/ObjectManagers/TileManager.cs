@@ -39,7 +39,7 @@ public class TileManager : MonoBehaviour {
 
     private void Update()
     {
-        Player_In_Trigger();
+        inTrigger();
     }
 
     public void Init()
@@ -70,14 +70,14 @@ public class TileManager : MonoBehaviour {
             if (i >= floor * Math.Sqrt(16))
             {
                 TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i - (int)Math.Sqrt(16)].transform.position.x, m_TileList[i - (int)Math.Sqrt(16)].transform.position.y + height, 10.0f), Quaternion.identity) as GameObject;
-                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i- (int)Math.Sqrt(16)].transform.position.x, m_TriggerList[i - (int)Math.Sqrt(16)].transform.position.y + height, -0.65f), Quaternion.identity) as GameObject;
+                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i- (int)Math.Sqrt(16)].transform.position.x, m_TriggerList[i - (int)Math.Sqrt(16)].transform.position.y + height, -0.65f), Quaternion.Euler(new Vector3(0f, 90f, 0f))) as GameObject;
                 floor++;
             }
             else
             {
                 // 다음 타일 좌표
                 TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i-1].transform.position.x + width, m_TileList[i-1].transform.position.y, 10.0f), Quaternion.identity) as GameObject;
-                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i-1].transform.position.x + width, m_TriggerList[i-1].transform.position.y, -0.65f), Quaternion.identity) as GameObject;
+                TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i-1].transform.position.x + width, m_TriggerList[i-1].transform.position.y, -0.65f), Quaternion.Euler(new Vector3(0f, 90f, 0f))) as GameObject;
             }
             
 
@@ -89,14 +89,20 @@ public class TileManager : MonoBehaviour {
 
     // 쿼드와 충돌 체크 -> i 번째 쿼드 = i 번째 타일
     // Testcase
-    private void Player_In_Trigger()
+    private void inTrigger()
     {
         for (int i = 0; i < 16; ++i)
         {
             if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_TriggerSwitch() == true)
             {
+                
                 m_TileList[i].GetComponent<Tile>().Set_TileSwitch(true);
                 m_TriggerList[i].GetComponent<TriggerQuad>().Set_TriggerSwitch(false);
+
+                if (m_TileList[i].GetComponent<Tile>().Get_PlayerConquer() == false && m_TriggerList[i].GetComponent<TriggerQuad>().Get_WhosTile() == 1)
+                    m_TileList[i].GetComponent<Tile>().Set_PlayerConquer(true);
+                else if (m_TileList[i].GetComponent<Tile>().Get_PlayerConquer() == true && m_TriggerList[i].GetComponent<TriggerQuad>().Get_WhosTile() == 2)
+                    m_TileList[i].GetComponent<Tile>().Set_PlayerConquer(false);
             }
         }
     }
