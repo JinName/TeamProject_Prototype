@@ -27,7 +27,6 @@ public class FloorManager : MonoBehaviour {
 
         // 층 크기, 위치 초기화
         m_Floor.transform.position = new Vector3(5f, 0f, -0.5f);
-        //m_Floor.transform.localScale = new Vector3(7.6f, 0.1f, 1f);
 
         // 리스트 삽입
         m_FloorList.Add(m_Floor);

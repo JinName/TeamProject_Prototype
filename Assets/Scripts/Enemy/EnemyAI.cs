@@ -114,7 +114,7 @@ public class EnemyAI : MonoBehaviour {
         m_vEnemyPosition = m_vEnemyPosition * m_fEnmeySpeed * Time.deltaTime;
         m_Rigidbody.MovePosition(transform.position + m_vEnemyPosition);
     }
-    // 1번 상태
+    // 1번 상태 : 좌우 움직임
     private void AI_1()
     {
         if ( this.transform.position.x > max_x )
@@ -127,5 +127,11 @@ public class EnemyAI : MonoBehaviour {
         }
 
         Move();
+    }
+
+    // 2번 상태 : 가까운 포탈 찾아 다른층으로 이동
+    private void AI_2()
+    {
+        // Search_Close_Portal(int _EnemyFloor) : 매개변수로 들어간 층 수에 존재하는 가까운 포탈 반환
     }
 }
