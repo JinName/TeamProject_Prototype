@@ -9,6 +9,7 @@ public class Tile : MonoBehaviour {
     bool m_bPlayerConquer = false;
 
     // 회전 스피드
+    float m_Speed = 200f;
 
     // 회전 스위치
     bool m_bRotateSwitch;
@@ -37,7 +38,7 @@ public class Tile : MonoBehaviour {
 
     public void TileRotate()
     {
-        rot += 200 * Time.deltaTime;
+        rot += m_Speed * Time.deltaTime;
         
         if (m_bPlayerConquer == true)
         {
