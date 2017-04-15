@@ -55,19 +55,19 @@ public class TriggerQuad : MonoBehaviour {
             {
                 m_bSwitch = true;
                 m_iWhosTile = 2;
-                Debug.Log("Player in");
+                //Debug.Log("Player in");
             }
         }
         else if (m_iWhosTile == 2)
         {
             if (other.name.Contains("Enemy"))
             {
-                Debug.Log("Enmey in");
+                //Debug.Log("Enmey in");
                 if (m_bConquer == false)
                 {
                     m_bSwitch = true;
                     m_iWhosTile = 1;
-                    Debug.Log("Switch");
+                    //Debug.Log("Switch");
                 }
             }
         }

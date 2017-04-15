@@ -51,6 +51,10 @@ public class PlayerController : MonoBehaviour {
     public bool Get_usePortal() { return usePortal; }
     public void Set_usePortal(bool _usePortal) { usePortal = _usePortal; }
 
+    // 외부에서 캐릭터 위치를 이동시키기위해
+    public void Set_PlayerPosition(Vector3 _vPosition)
+    { this.transform.position = _vPosition; }
+
     // 플레이어 포탈 쿨타임 업데이트
     private void PortalCoolDown()
     {
@@ -74,6 +78,13 @@ public class PlayerController : MonoBehaviour {
        
     }
 
+    // 플레이어 액션키 Z
+    void ActionKey()
+    {
+
+    }
+
+    // 플레이어 좌우 이동
     void Move(float _h)
     {
         m_vCharPosition.Set(_h, 0f, 0f);
