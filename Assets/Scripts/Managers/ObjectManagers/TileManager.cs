@@ -53,7 +53,7 @@ public class TileManager : MonoBehaviour {
         m_Tile = GameObject.FindGameObjectWithTag("Tile");
         m_Trigger = GameObject.FindGameObjectWithTag("TriggerQuad");
 
-        m_Tile.transform.position = new Vector3(2.2f, 1.3f, 10.0f);
+        m_Tile.transform.position = new Vector3(2.2f, 1.3f, 70.0f);
         m_Trigger.transform.position = new Vector3(2.0f, 1.0f, -0.65f);
 
         m_TileList.Add(m_Tile);
@@ -69,14 +69,14 @@ public class TileManager : MonoBehaviour {
         {
             if (i >= floor * Math.Sqrt(16))
             {
-                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i - (int)Math.Sqrt(16)].transform.position.x, m_TileList[i - (int)Math.Sqrt(16)].transform.position.y + height, 10.0f), Quaternion.identity) as GameObject;
+                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i - (int)Math.Sqrt(16)].transform.position.x, m_TileList[i - (int)Math.Sqrt(16)].transform.position.y + height, 70.0f), Quaternion.identity) as GameObject;
                 TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i- (int)Math.Sqrt(16)].transform.position.x, m_TriggerList[i - (int)Math.Sqrt(16)].transform.position.y + height, -0.65f), Quaternion.Euler(new Vector3(0f, 90f, 0f))) as GameObject;
                 floor++;
             }
             else
             {
                 // 다음 타일 좌표
-                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i-1].transform.position.x + width, m_TileList[i-1].transform.position.y, 10.0f), Quaternion.identity) as GameObject;
+                TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i-1].transform.position.x + width, m_TileList[i-1].transform.position.y, 70.0f), Quaternion.identity) as GameObject;
                 TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i-1].transform.position.x + width, m_TriggerList[i-1].transform.position.y, -0.65f), Quaternion.Euler(new Vector3(0f, 90f, 0f))) as GameObject;
             }
             
@@ -96,7 +96,7 @@ public class TileManager : MonoBehaviour {
             if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_TriggerSwitch() == true)
             {
                 
-                m_TileList[i].GetComponent<Tile>().Set_TileSwitch(true);
+                m_TileList[i].GetComponent<Tile>().Set_TileSwitch(true); 
                 m_TriggerList[i].GetComponent<TriggerQuad>().Set_TriggerSwitch(false);
 
                 if (m_TileList[i].GetComponent<Tile>().Get_PlayerConquer() == false && m_TriggerList[i].GetComponent<TriggerQuad>().Get_WhosTile() == 1)

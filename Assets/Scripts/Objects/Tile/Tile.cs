@@ -43,7 +43,7 @@ public class Tile : MonoBehaviour {
         if (m_bPlayerConquer == true)
         {
             Debug.Log("rotate in");
-            this.transform.eulerAngles = new Vector3(0, -rot, 0);
+            this.transform.eulerAngles = new Vector3(0, 180 - rot, 0);
             Debug.Log(rot);
             if (rot >= 180)
             {

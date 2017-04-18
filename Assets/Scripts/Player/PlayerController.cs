@@ -10,6 +10,16 @@ public class PlayerController : MonoBehaviour {
 
     float coolTime;
 
+    // 플레이어 초기 위치
+    float m_fx = 7.5f;
+    float m_fy = 0.1f;
+    float m_fz = -0.4f;
+
+    // x축 max, min
+    float max_x = 8.2f;
+    float min_x = 1.7f;
+
+    
     // 캐릭터 좌표 벡터
     Vector3 m_vCharPosition;
 
@@ -27,8 +37,11 @@ public class PlayerController : MonoBehaviour {
         coolTime = 1.5f;
         walking = false;
         usePortal = false;
-        m_Animator = GetComponent<Animator>();
+        m_Animator = GetComponentInChildren<Animator>();
+        
         m_PlayerRigidbody = GetComponent<Rigidbody>();
+
+        this.transform.position = new Vector3(m_fx, m_fy, m_fz);
     }
 
     // Update is called once per frame
@@ -96,7 +109,12 @@ public class PlayerController : MonoBehaviour {
         
         
         // 트랜스폼
-        m_PlayerRigidbody.MovePosition(transform.position + m_vCharPosition);
+        if(transform.position.x + m_vCharPosition.x > max_x)
+            m_PlayerRigidbody.MovePosition(transform.position);
+        else if (transform.position.x + m_vCharPosition.x < min_x)
+            m_PlayerRigidbody.MovePosition(transform.position);
+        else
+            m_PlayerRigidbody.MovePosition(transform.position + m_vCharPosition);
     }
 
     void Animating(float _h)

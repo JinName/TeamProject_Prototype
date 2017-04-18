@@ -6,6 +6,8 @@ public class PortalManager : MonoBehaviour {
 
     // 플레이어
     PlayerController playerCtrl;
+    // Enemy
+    EnemyAI enemyAI;
 
     // 포탈 / 문 / 개구멍 / 스프링 오브젝트
     // 일단 임시 포탈
@@ -23,6 +25,7 @@ public class PortalManager : MonoBehaviour {
     {
         // 플레이어
         playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
+        enemyAI = GameObject.Find("Enemy").GetComponent<EnemyAI>();
 
         // 포탈
         m_Red = GameObject.FindGameObjectWithTag("Red1");
@@ -80,15 +83,62 @@ public class PortalManager : MonoBehaviour {
     {
         // 같은 종류의 다른 위치 포탈로 이동
         // 리스트 [i] 로 구분
-        if (_portalNum > 3)
+        if (_portal[_portalNum].GetComponent<Portal>().Get_Player_in_Portal() == true)
         {
-            playerCtrl.Set_PlayerPosition(_portal[_portalNum - 4].transform.position);
+            if (_portalNum > 3)
+            {
+                playerCtrl.Set_PlayerPosition(_portal[_portalNum - 4].transform.position);
+            }
+            else
+            {
+                playerCtrl.Set_PlayerPosition(_portal[_portalNum + 4].transform.position);
+            }
+
+            playerCtrl.Set_usePortal(true);
         }
-        else
+        else if (_portal[_portalNum].GetComponent<Portal>().Get_Player_in_Portal() == false)
         {
-            playerCtrl.Set_PlayerPosition(_portal[_portalNum + 4].transform.position);
+            if (_portalNum > 3)
+            {
+                enemyAI.Set_EnemyPosition(_portal[_portalNum - 4].transform.position);
+            }
+            else
+            {
+                enemyAI.Set_EnemyPosition(_portal[_portalNum + 4].transform.position);
+            }
+
+            enemyAI.Set_usePortal(true);
+        }
+    }
+
+    // AI 용 포탈 위치 반환 - 타겟으로 이용, AI 움직이게 만듬
+    public Vector3 Search_Close_Portal(int _floor, Vector3 _position)
+    {
+        Vector3 portalVector = new Vector3(0f, 0f, 0f);
+
+        float[] Temp = new float[2] { 0f, 0f };
+        int[] portalNum = new int[2] { 0, 0 };
+
+        int j = 0;
+
+        for (int i = 0; i < 8; ++i)
+        {
+            if(m_PortalList[i].GetComponent<Portal>().Get_PortalFloor() == _floor)
+            {
+                if (j < 2)
+                {
+                    Temp[j] = m_PortalList[i].GetComponent<Portal>().transform.position.x - _position.x;
+                    portalNum[j] = i;
+                    j = j + 1;
+                }
+            }
         }
 
-        playerCtrl.Set_usePortal(true);
+        if (Mathf.Abs(Temp[0]) < Mathf.Abs(Temp[1]))
+            portalVector = m_PortalList[portalNum[0]].transform.position;
+        else if (Mathf.Abs(Temp[0]) > Mathf.Abs(Temp[1]))
+            portalVector = m_PortalList[portalNum[1]].transform.position;
+
+        return portalVector;
     }
 }
