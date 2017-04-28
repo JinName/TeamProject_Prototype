@@ -14,7 +14,7 @@ public class EnemyAI : MonoBehaviour {
     // 3 :
     // 4 : 특수타일 점령 시 플레이어 있는 층으로
     private int m_iState_AI = 1;
-
+    
     // AI State CoolTime : 같은 상태가 다시 나오지 않도록
     private bool m_bAI_On = false;
     // 각 상태 지속시간 -> 3 초마다 상태가 바뀜
@@ -31,7 +31,7 @@ public class EnemyAI : MonoBehaviour {
     bool m_bSetting_Complete = false;
     // Enemy 포탈 이용 쿨타임
     bool usePortal = false;
-    float m_fCooltime = 3.0f;
+    float m_fCooltime = 4.0f;
 
     // 적의 시작 위치 값
     private float m_fx = 2.2f; // 유동적
@@ -144,7 +144,7 @@ public class EnemyAI : MonoBehaviour {
                 if (m_fCooltime <= 0f)
                 {
                     usePortal = false;
-                    m_fCooltime = 3.0f;
+                    m_fCooltime = 4.0f;
                 }
             }
         }

@@ -7,14 +7,20 @@ public class TriggerQuad : MonoBehaviour {
     // 누가 점령 중인지 판별하기 위한 변수 / 초기값 = 1 (해의 땅)
     int m_iWhosTile;
 
+    // 특수 타일에 해당하는 트리거
+    bool m_bSpecial = false;
+
     // 트리거에 진입했을때 true
-    bool m_bSwitch;
+    bool m_bSwitch = false;
+
+    // 트리거 위에 있을때 (특수타일 점령)
+    bool m_bStay = false;
 
     // 연속회전 방지 변수
     bool m_bStopRotate = false;
 
     // 3초 점령 판별 변수
-    float m_fStayTime = 3.0f;
+    float m_fStayTime = 5.0f;
     bool m_bConquer;
 
 
@@ -27,6 +33,10 @@ public class TriggerQuad : MonoBehaviour {
 
     }
 
+    // 스페셜 타일의 트리거인지
+    public bool Get_isSpecial() { return m_bSpecial; }
+    public void Set_isSpecial(bool _bSpecial) { m_bSpecial = _bSpecial; }
+
     // 타일매니저에서 충돌 판별을 위한 get, set
     // 회전해야할지
     public bool Get_TriggerSwitch() { return m_bSwitch; }
@@ -37,37 +47,39 @@ public class TriggerQuad : MonoBehaviour {
     public void Set_StopRotate(bool _bStopRotate) { m_bStopRotate = _bStopRotate; }
 
     // 점령 판별
-    public bool Get_Conquer() { return m_bConquer; }
-    public void Set_Conquer(bool _bConquer) { m_bConquer = _bConquer; }
+    public bool Get_isConquered() { return m_bConquer; }
+    public void Set_isConquered(bool _bConquer) { m_bConquer = _bConquer; }
 
     // 누가 점령 중인지 리턴
     public int Get_WhosTile() { return m_iWhosTile; }
 
+    // 트리거 위에 서있는지
+    public bool Get_isStay() { return m_bStay; }
 
     // OnTrigger 함수들에선 other 이 Player 인지, Enemy 인지 판별할것.
 
     // 트리거에 진입했을때
     private void OnTriggerEnter(Collider other)
     {
-        if (m_iWhosTile == 1)
+        if (m_bSpecial == false)
         {
-            if (other.name.Contains("Player"))
+            if (m_iWhosTile == 1)
             {
-                m_bSwitch = true;
-                m_iWhosTile = 2;
-                //Debug.Log("Player in");
-            }
-        }
-        else if (m_iWhosTile == 2)
-        {
-            if (other.name.Contains("Enemy"))
-            {
-                //Debug.Log("Enmey in");
-                if (m_bConquer == false)
+                if (other.name.Contains("Player"))
                 {
                     m_bSwitch = true;
-                    m_iWhosTile = 1;
-                    //Debug.Log("Switch");
+                    m_iWhosTile = 2;
+                }
+            }
+            else if (m_iWhosTile == 2)
+            {
+                if (other.name.Contains("Enemy"))
+                {
+                    if (m_bConquer == false)
+                    {
+                        m_bSwitch = true;
+                        m_iWhosTile = 1;
+                    }
                 }
             }
         }
@@ -77,23 +89,30 @@ public class TriggerQuad : MonoBehaviour {
     // 트리거에 서있는 경우 (연속회전 방지 + 3초 이상 머무를시 고정 점령)
     private void OnTriggerStay(Collider other)
     {
-        /*
-        if (other.name.Contains("Player") && m_iWhosTile == 2)
+        if (m_bSpecial == true)
         {
-            m_fStayTime -= Time.deltaTime;
-            if (m_fStayTime <= 0f)
+            if (other.name.Contains("Player") && m_iWhosTile == 1)
             {
-                m_bConquer = true;
-                m_fStayTime = 3f;
-                Debug.Log("Conquered !");
+                m_fStayTime -= Time.deltaTime;
+
+                if (m_fStayTime <= 0f)
+                {
+                    m_bSwitch = true;
+                    m_bConquer = true;
+                    m_iWhosTile = 2;
+                    m_fStayTime = 5.0f;
+                    Debug.Log("Conquered !");
+                }
             }
         }
-        */
     }
 
     // 트리거에서 빠져나올때
     private void OnTriggerExit(Collider other)
     {
-        m_bStopRotate = false;
+        if (other.name.Contains("Player") && m_iWhosTile == 1)
+        {
+            m_fStayTime = 5.0f;
+        }
     }
 }
