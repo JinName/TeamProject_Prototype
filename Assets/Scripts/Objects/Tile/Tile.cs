@@ -8,6 +8,9 @@ public class Tile : MonoBehaviour {
     // false : Enemy / true : Player
     bool m_bPlayer_In = false;
 
+    // 타일이 몇층인지
+    public int m_iFloor = 0;
+
     // 스페셜 타일 만들때
     bool m_bSpecial = false;
     // 스페셜 타일이 점령되었을때
@@ -26,6 +29,9 @@ public class Tile : MonoBehaviour {
         m_bRotateSwitch = false;
     }
 
+    public int Get_Floor() { return m_iFloor; }
+    public void Set_Floor(int _iFloor) { m_iFloor = _iFloor; }
+
     public bool Get_isConquered() { return m_bConquer; }
     public void Set_isConquered(bool _bConquer) { m_bConquer = _bConquer; }
 
@@ -40,13 +46,11 @@ public class Tile : MonoBehaviour {
 
     private void Update()
     {
-        if (m_bConquer == false)
-        {
             if (m_bRotateSwitch == true)
             {
                 TileRotate();
             }
-        }
+        
     }
 
     public void TileRotate()

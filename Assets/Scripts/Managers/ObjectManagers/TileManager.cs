@@ -66,6 +66,8 @@ public class TileManager : MonoBehaviour {
         }
         */
 
+        m_Tile.GetComponent<Tile>().Set_Floor(1);
+
         m_TileList.Add(m_Tile);
         m_TriggerList.Add(m_Trigger);
     }
@@ -79,9 +81,11 @@ public class TileManager : MonoBehaviour {
         {
             if (i >= floor * Mathf.Sqrt(16))
             {
+                floor++;
+                m_Tile.GetComponent<Tile>().Set_Floor(floor);
+
                 TileClone = Instantiate(m_Tile, new Vector3(m_TileList[i - (int)Mathf.Sqrt(16)].transform.position.x, m_TileList[i - (int)Mathf.Sqrt(16)].transform.position.y + height, 70.0f), Quaternion.identity) as GameObject;
                 TriggerClone = Instantiate(m_Trigger, new Vector3(m_TriggerList[i - (int)Mathf.Sqrt(16)].transform.position.x, m_TriggerList[i - (int)Mathf.Sqrt(16)].transform.position.y + height, -0.65f), Quaternion.Euler(new Vector3(0f, 90f, 0f))) as GameObject;
-                floor++;
             }
             else
             {
@@ -107,6 +111,19 @@ public class TileManager : MonoBehaviour {
     {
         for (int i = 0; i < 16; ++i)
         {
+            if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isSpecial() == true)
+            {
+                if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isConquered() == true)
+                {
+                    Debug.Log("in Set Con");
+                    for (int j = (int)Mathf.Sqrt(16) * (m_TileList[i].GetComponent<Tile>().Get_Floor() - 1);
+                        j < (Mathf.Sqrt(16) * (m_TileList[i].GetComponent<Tile>().Get_Floor() - 1)) + Mathf.Sqrt(16); ++j)
+                    {
+                        m_TriggerList[j].GetComponent<TriggerQuad>().Set_isConquered(true);
+                    }
+                }
+            }
+
             if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_TriggerSwitch() == true)
             {
                 m_TileList[i].GetComponent<Tile>().Set_TileSwitch(true); 
@@ -116,11 +133,6 @@ public class TileManager : MonoBehaviour {
                     m_TileList[i].GetComponent<Tile>().Set_Player_In(true);
                 else if (m_TileList[i].GetComponent<Tile>().Get_Player_In() == true && m_TriggerList[i].GetComponent<TriggerQuad>().Get_WhosTile() == 2)
                     m_TileList[i].GetComponent<Tile>().Set_Player_In(false);
-            }
-
-            if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isSpecial() == true)
-            {
-                m_TileList[i].GetComponent<Tile>().Set_isConquered(true);
             }
         }
     }

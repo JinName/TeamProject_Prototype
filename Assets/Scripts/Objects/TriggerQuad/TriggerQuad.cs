@@ -37,6 +37,10 @@ public class TriggerQuad : MonoBehaviour {
     public bool Get_isSpecial() { return m_bSpecial; }
     public void Set_isSpecial(bool _bSpecial) { m_bSpecial = _bSpecial; }
 
+    // 스페셜 타일이 점령되었는지
+    public bool Get_isConquered() { return m_bConquer; }
+    public void Set_isConquered(bool _bConquer) { m_bConquer = _bConquer; }
+
     // 타일매니저에서 충돌 판별을 위한 get, set
     // 회전해야할지
     public bool Get_TriggerSwitch() { return m_bSwitch; }
@@ -45,10 +49,6 @@ public class TriggerQuad : MonoBehaviour {
     // 연속 회전 방지
     public bool Get_StopRotate() { return m_bStopRotate; }
     public void Set_StopRotate(bool _bStopRotate) { m_bStopRotate = _bStopRotate; }
-
-    // 점령 판별
-    public bool Get_isConquered() { return m_bConquer; }
-    public void Set_isConquered(bool _bConquer) { m_bConquer = _bConquer; }
 
     // 누가 점령 중인지 리턴
     public int Get_WhosTile() { return m_iWhosTile; }
@@ -69,6 +69,7 @@ public class TriggerQuad : MonoBehaviour {
                 {
                     m_bSwitch = true;
                     m_iWhosTile = 2;
+                    
                 }
             }
             else if (m_iWhosTile == 2)
