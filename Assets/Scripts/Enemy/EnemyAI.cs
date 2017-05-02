@@ -52,6 +52,8 @@ public class EnemyAI : MonoBehaviour {
     // 애니매이터
     Animator m_Animator;
     bool walking = false;
+    // 3번 AI 애니매이션
+    bool lookAround = false;
 
     // 초기화
     private void Awake()
@@ -156,15 +158,28 @@ public class EnemyAI : MonoBehaviour {
         {
             this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
         }
-        else
+        else if ( m_fDirection < 0 )
         {
             this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+        }
+        else if ( m_fDirection == 0 )
+        {
+            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         }
     }
 
     // AI 상태에 따른 움직임
     private void AI_Move()
     {
+        // AI 가 중복되지않게 랜덤으로 선택
+        if (m_bAI_On == false)
+        {
+            Debug.Log("False");
+            m_iState_AI = Random.Range(1, 4);
+            m_bAI_On = true;
+        }
+
+
         if (m_bAI_On == true)
         {
             if (m_iState_AI == 1)
@@ -177,22 +192,10 @@ public class EnemyAI : MonoBehaviour {
                 Debug.Log("AI_2");
                 AI_2();
             }
-        }
-
-        // AI 가 중복되지않게 랜덤으로 선택
-        if (m_bAI_On == false)
-        {
-            //int CurrentAI = m_iState_AI;
-            //while (true)
+            else if (m_iState_AI == 3)
             {
-                Debug.Log("False");
-                m_iState_AI = Random.Range(1, 3);
-                //if (m_iState_AI != CurrentAI)
-                {
-                    m_bAI_On = true;
-                    //break;
-                }
-                    
+                Debug.Log("AI_3");
+                AI_3();
             }
         }
     }
@@ -260,5 +263,38 @@ public class EnemyAI : MonoBehaviour {
             m_bSetting_Complete = false;
             //m_bAI_On = false;
         }
+    }
+
+    // 3번 상태 : 제자리에서 두리번
+    private void AI_3()
+    {
+        // 상태에 필요한 초기 셋팅
+        if (m_bSetting_Complete == false)
+        {
+            m_fDirection = 0.0f;
+
+            m_bSetting_Complete = true;
+        }
+
+        // 상태 지속시간
+        if (m_fState_Runtime > 0)
+        {
+            m_fState_Runtime -= Time.deltaTime;
+
+            // 상태 끝날때 설정 초기화
+            if (m_fState_Runtime <= 0)
+            {
+                m_bAI_On = false;
+                m_fState_Runtime = 5.0f;
+                m_bSetting_Complete = false;
+            }
+        }
+    }
+
+    // 4번 상태 : if (특수타일 점령 중이면)
+    //                  쫓아감;
+    private void AI_4()
+    {
+
     }
 }
