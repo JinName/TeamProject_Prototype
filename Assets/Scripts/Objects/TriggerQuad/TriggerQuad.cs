@@ -118,6 +118,7 @@ public class TriggerQuad : MonoBehaviour {
                     playerCtrl.Set_Special_Counter(false);
                     enemy.Set_AI_4(false);
                     enemy.Set_AI_On(false);
+                    enemy.Set_Setting(false);
                     //Debug.Log("Conquered !");
                 }
             }
@@ -137,6 +138,7 @@ public class TriggerQuad : MonoBehaviour {
 
                 enemy.Set_AI_4(false);
                 enemy.Set_AI_On(false);
+                enemy.Set_Setting(false);
             }
         }
     }

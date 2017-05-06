@@ -63,7 +63,7 @@ public class EnemyAI : MonoBehaviour {
     PlayerController playerCtrl;
     bool Player_in_Special = false;
     bool AI_Init = false;
-    bool Setting = false;
+    bool Setting_AI_4 = false;
 
     // 초기화
     private void Awake()
@@ -141,6 +141,7 @@ public class EnemyAI : MonoBehaviour {
 
     // 플레이어가 특수타일에서 벗어나면 추적멈추고 상태 초기화
     public void Set_AI_On(bool _bAI_On) { m_bAI_On = _bAI_On; }
+    public void Set_Setting(bool _Setting) { Setting_AI_4 = _Setting; }
 
     // 현재 AI 번호 반환
     public int Get_AI_State() { return m_iState_AI; }
@@ -198,11 +199,16 @@ public class EnemyAI : MonoBehaviour {
     {
         //Debug.Log(Player_in_Special);
         // 플레이어가 특수타일 점령 중 이면 AI 번호 4로 바꿈
-        if (Player_in_Special == true)
+        if (Setting_AI_4 == false)
         {
-            m_iState_AI = 4;
-            stateList.Remove(3);
-            m_bAI_On = true;
+            if (Player_in_Special == true)
+            {
+                m_iState_AI = 4;
+                stateList.Remove(3);
+                m_bSetting_Complete = false;
+                m_bAI_On = true;
+                Setting_AI_4 = true;
+            }
         }
 
         // AI 가 중복되지않게 랜덤으로 선택
@@ -349,7 +355,7 @@ public class EnemyAI : MonoBehaviour {
     {
         if (m_bSetting_Complete == false)
         {
-            m_fEnmeySpeed = 40f;
+            m_fEnmeySpeed = 30f;
 
             if (m_iEnemyFloor == playerCtrl.Get_PlayerFloor())
             {
