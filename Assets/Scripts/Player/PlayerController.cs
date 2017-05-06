@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+    // 플레이어 현재 층
+    int m_iPlayer_Floor = 1;
 
     bool walking;
     bool usePortal;
@@ -31,6 +33,11 @@ public class PlayerController : MonoBehaviour {
 
     Animator m_Animator;
 
+    // 특수타일 카운터 스위치
+    bool m_bSpecial_Counter = false;
+
+    public bool Get_Special_Counter() { return m_bSpecial_Counter; }
+    public void Set_Special_Counter(bool _Special_Counter) { m_bSpecial_Counter = _Special_Counter; }
 
     void Awake()
     {
@@ -59,6 +66,14 @@ public class PlayerController : MonoBehaviour {
         PortalCoolDown();
         
 	}
+
+    private void Update()
+    {
+        PlayerFloor();
+    }
+
+    // 현재 플레이어가 있는 층
+    public int Get_PlayerFloor() { return m_iPlayer_Floor; }
 
     // 플레이어가 포탈 이용한지 체크
     public bool Get_usePortal() { return usePortal; }
@@ -89,6 +104,20 @@ public class PlayerController : MonoBehaviour {
             }
         }
        
+    }
+
+    void PlayerFloor()
+    {
+        if (this.transform.position.y > -0.2f && this.transform.position.y < 2.3f)
+            m_iPlayer_Floor = 1;
+        else if (this.transform.position.y > 2.3f && this.transform.position.y < 4.9f)
+            m_iPlayer_Floor = 2;
+        else if (this.transform.position.y > 4.9f && this.transform.position.y < 7.5f)
+            m_iPlayer_Floor = 3;
+        else if (this.transform.position.y > 7.5f && this.transform.position.y < 10.2f)
+            m_iPlayer_Floor = 4;
+
+        Debug.Log("Player의 현재 층 : " + m_iPlayer_Floor.ToString());
     }
 
     // 플레이어 액션키 Z
@@ -131,9 +160,7 @@ public class PlayerController : MonoBehaviour {
         {
             if (_h < 0f)
             {
-                //Debug.Log(_h);
                 this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
-                //Debug.Log("rotate");
             }
             else if (_h > 0f)
             {

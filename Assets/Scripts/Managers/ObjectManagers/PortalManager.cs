@@ -20,6 +20,8 @@ public class PortalManager : MonoBehaviour {
 
     // 포탈 리스트
     List<GameObject> m_PortalList;
+    // 포탈 갯수
+    int m_iPortal_Count = 8;
 
     private void Awake()
     {
@@ -62,6 +64,15 @@ public class PortalManager : MonoBehaviour {
 
         m_PortalClone = Instantiate(m_Yellow, new Vector3(m_Yellow.transform.position.x - 3f, m_Yellow.transform.position.y + 2.55f, m_Yellow.transform.position.z), Quaternion.identity);
         m_PortalList.Add(m_PortalClone);
+        
+        //파트너 포탈 셋팅
+        for(int i = 0; i < 8; ++i)
+        {
+            if( i < 4 )
+                m_PortalList[i].GetComponent<Portal>().Set_Partner_Portal_Floor(m_PortalList[i + 4].GetComponent<Portal>().Get_PortalFloor());
+            else if( i >= 4 )
+                m_PortalList[i].GetComponent<Portal>().Set_Partner_Portal_Floor(m_PortalList[i - 4].GetComponent<Portal>().Get_PortalFloor());
+        }
     }
     
     void onPortalCheck()
@@ -71,7 +82,6 @@ public class PortalManager : MonoBehaviour {
         {
             if(m_PortalList[i].GetComponent<Portal>().Get_PortalSwitch() == true)
             {
-                //Debug.Log("onPortalCheck");
                 moveOtherPortal(m_PortalList, i);
 
                 m_PortalList[i].GetComponent<Portal>().Set_PortalSwitch(false);
@@ -108,36 +118,105 @@ public class PortalManager : MonoBehaviour {
             }
 
             enemyAI.Set_usePortal(true);
+            //enemyAI.Set_AI_4_Setting(true);
+            _portal[_portalNum].GetComponent<Portal>().Set_Enemy_Use(false);
         }
     }
 
-    // AI 용 포탈 위치 반환 - 타겟으로 이용, AI 움직이게 만듬
+    public void Reset_Portal_Useable()
+    {
+        for (int i = 0; i < m_iPortal_Count; ++i)
+        {
+            m_PortalList[i].GetComponent<Portal>().Set_Enemy_Use(false);
+        }
+    }
+
+    // AI 용 입력한 층과 같은 층에 있는 포탈 중 플레이어에게 갈 수 있는 포탈 있는지, 없으면 거리가 먼 포탈을 반환
+    public Vector3 Search_toPlayer_Portal(int _floor, Vector3 _position)
+    {
+        Vector3 portalVector = new Vector3(0f, 0f, 0f);
+        // 한번에 플레이어에가 갈 수 있는 포탈 있는지 없는지
+        bool toPlayer = false;
+        // 해당 층의 포탈 넘버
+        int[] portalNum = new int[2] { 0, 0 };
+        int j = 0;
+        // 포탈과 매개변수 포지션과의 거리
+        float[] Distance = new float[2] { 0f, 0f };
+
+        // 플레이어 한번에 갈 수 있는 포탈이 있는지 찾아봄
+        for (int i = 0; i < m_iPortal_Count; ++i)
+        {
+            if(m_PortalList[i].GetComponent<Portal>().Get_PortalFloor() == _floor)
+            {
+                portalNum[j] = i;
+                j = j + 1;
+                if(m_PortalList[i].GetComponent<Portal>().Get_Partner_Portal_Floor() == playerCtrl.Get_PlayerFloor())
+                {
+                    Debug.Log("Enemy Floor's Portal -> Player Floor");
+                    m_PortalList[i].GetComponent<Portal>().Set_Enemy_Use(true);
+                    portalVector = m_PortalList[i].transform.position;
+                    toPlayer = true;
+                }
+            }
+        }
+
+        // 플레이어에게 한번에 갈 수 없다면, 같은 층에 있는 포탈 중 거리가 먼 포탈 반환
+        if (toPlayer == false)
+        {
+            Distance[0] = Mathf.Abs(m_PortalList[portalNum[0]].transform.position.x - _position.x);
+            Distance[1] = Mathf.Abs(m_PortalList[portalNum[1]].transform.position.x - _position.x);
+
+            if(Distance[0] > Distance[1])
+            {
+                portalVector = m_PortalList[portalNum[0]].transform.position;
+                m_PortalList[portalNum[0]].GetComponent<Portal>().Set_Enemy_Use(true);
+            }
+            else
+            {
+                portalVector = m_PortalList[portalNum[1]].transform.position;
+                m_PortalList[portalNum[1]].GetComponent<Portal>().Set_Enemy_Use(true);
+            }
+        }
+
+        return portalVector;
+    }
+
+    // AI 용 포탈 위치 반환 - 타겟으로 이용, AI 움직이게 만듦
     public Vector3 Search_Close_Portal(int _floor, Vector3 _position)
     {
         Vector3 portalVector = new Vector3(0f, 0f, 0f);
 
-        float[] Temp = new float[2] { 0f, 0f };
+        float[] Distance = new float[2] { 0f, 0f };
         int[] portalNum = new int[2] { 0, 0 };
 
         int j = 0;
 
         for (int i = 0; i < 8; ++i)
         {
-            if(m_PortalList[i].GetComponent<Portal>().Get_PortalFloor() == _floor)
+            if (m_PortalList[i].GetComponent<Portal>().Get_PortalFloor() == _floor)
             {
+                //Debug.Log("Enmey 와 같은 층의 포탈 번호 : " + i.ToString());
                 if (j < 2)
                 {
-                    Temp[j] = m_PortalList[i].GetComponent<Portal>().transform.position.x - _position.x;
+                    Distance[j] = m_PortalList[i].GetComponent<Portal>().transform.position.x - _position.x;
                     portalNum[j] = i;
                     j = j + 1;
                 }
             }
         }
 
-        if (Mathf.Abs(Temp[0]) < Mathf.Abs(Temp[1]))
+        if (Mathf.Abs(Distance[0]) < Mathf.Abs(Distance[1]))
+        {
             portalVector = m_PortalList[portalNum[0]].transform.position;
-        else if (Mathf.Abs(Temp[0]) > Mathf.Abs(Temp[1]))
+            m_PortalList[portalNum[0]].GetComponent<Portal>().Set_Enemy_Use(true);
+            Debug.Log("0 == true");
+        }
+        else if (Mathf.Abs(Distance[0]) > Mathf.Abs(Distance[1]))
+        {
             portalVector = m_PortalList[portalNum[1]].transform.position;
+            m_PortalList[portalNum[1]].GetComponent<Portal>().Set_Enemy_Use(true);
+            Debug.Log("1 == true");
+        }
 
         return portalVector;
     }

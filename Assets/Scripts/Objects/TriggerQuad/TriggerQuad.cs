@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TriggerQuad : MonoBehaviour {
+    // Player
+    PlayerController playerCtrl;
+    // Enemy
+    EnemyAI enemy;
 
     // 누가 점령 중인지 판별하기 위한 변수 / 초기값 = 1 (해의 땅)
     int m_iWhosTile;
@@ -31,6 +35,8 @@ public class TriggerQuad : MonoBehaviour {
         m_bStopRotate = false;
         m_bConquer = false;
 
+        playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
+        enemy = GameObject.Find("Enemy").GetComponent<EnemyAI>();
     }
 
     // 스페셜 타일의 트리거인지
@@ -69,7 +75,6 @@ public class TriggerQuad : MonoBehaviour {
                 {
                     m_bSwitch = true;
                     m_iWhosTile = 2;
-                    
                 }
             }
             else if (m_iWhosTile == 2)
@@ -84,7 +89,6 @@ public class TriggerQuad : MonoBehaviour {
                 }
             }
         }
-        
     }
 
     // 트리거에 서있는 경우 (연속회전 방지 + 3초 이상 머무를시 고정 점령)
@@ -94,6 +98,15 @@ public class TriggerQuad : MonoBehaviour {
         {
             if (other.name.Contains("Player") && m_iWhosTile == 1)
             {
+                if (m_bConquer == false)
+                {
+                    m_bStay = true;
+                    playerCtrl.Set_Special_Counter(true);
+                    //Debug.Log("m_bStay = true");
+                }
+
+                Debug.Log(m_bStay);
+
                 m_fStayTime -= Time.deltaTime;
 
                 if (m_fStayTime <= 0f)
@@ -102,7 +115,10 @@ public class TriggerQuad : MonoBehaviour {
                     m_bConquer = true;
                     m_iWhosTile = 2;
                     m_fStayTime = 5.0f;
-                    Debug.Log("Conquered !");
+                    playerCtrl.Set_Special_Counter(false);
+                    enemy.Set_AI_4(false);
+                    enemy.Set_AI_On(false);
+                    //Debug.Log("Conquered !");
                 }
             }
         }
@@ -111,9 +127,17 @@ public class TriggerQuad : MonoBehaviour {
     // 트리거에서 빠져나올때
     private void OnTriggerExit(Collider other)
     {
-        if (other.name.Contains("Player") && m_iWhosTile == 1)
+        if (m_bSpecial == true)
         {
-            m_fStayTime = 5.0f;
+            if (other.name.Contains("Player") && m_iWhosTile == 1)
+            {
+                m_fStayTime = 5.0f;
+                m_bStay = false;
+                playerCtrl.Set_Special_Counter(false);
+
+                enemy.Set_AI_4(false);
+                enemy.Set_AI_On(false);
+            }
         }
     }
 }
