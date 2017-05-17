@@ -30,8 +30,8 @@ public class TileManager : MonoBehaviour {
     int[] array_SpecialNum = new int[4] { 2, 4, 9, 15 };
 
     // 타일 스코어 리턴
-    int m_iSunScore;
-    int m_iMoonScore;
+   public int m_iSunScore;
+   public int m_iMoonScore;
 
     private void Awake()
     {
