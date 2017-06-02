@@ -19,6 +19,10 @@ TagManager:
   - Yellow1
   - Yellow2
   - Enemy
+  - Portal_Door
+  - Door_Trigger
+  - Floors
+  - SpecialCounter_Front
   layers:
   - Default
   - TransparentFX

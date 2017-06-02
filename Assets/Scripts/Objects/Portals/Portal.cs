@@ -60,13 +60,10 @@ public class Portal : MonoBehaviour {
 
     private void OnTriggerStay(Collider other)
     {
-        //Debug.Log("Enter the Trigger");
         if (other.name.Contains("Player") && playerCtrl.Get_usePortal() == false)
         {
-            //Debug.Log("in Contains");
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                //Debug.Log("in Portal");
                 isPlayer = true;
                 m_bSwitch = true;
             }

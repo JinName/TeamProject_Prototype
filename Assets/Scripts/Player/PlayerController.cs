@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+    int m_bPlayer_Health = 3;
+    // 플레이어 충돌
+    bool m_bCollision;
+    //bool m_bLock; // 충돌시 플레이어 입력 못하게
+    bool m_bSetting_Complete = false;
+
+    // 함수포인터화
+    delegate void DoorAction();
+    DoorAction doorAction;
+
+    //bool m_bDoor
+
+    bool m_bReady_to_Teleport = false;
+    bool m_bPlayerLock = false;
+    bool m_bLets_Action = false;
+    bool m_bEntering = false;
+
     // 플레이어 현재 층
     int m_iPlayer_Floor = 1;
 
@@ -24,6 +41,8 @@ public class PlayerController : MonoBehaviour {
     
     // 캐릭터 좌표 벡터
     Vector3 m_vCharPosition;
+    float m_fCollision_Direction; // 밀려날 방향
+    float m_fCollision_Power = 38.0f; // 밀려나는 힘
 
     // 캐릭터 스피드 밖에서 참조 가능
     public float m_fSpeed = 6f;
@@ -36,11 +55,24 @@ public class PlayerController : MonoBehaviour {
     // 특수타일 카운터 스위치
     bool m_bSpecial_Counter = false;
 
+    public bool Get_Player_Lock() { return m_bPlayerLock; }
+    public void Set_Player_Lock(bool _bPlayer_Lock) { m_bPlayerLock = _bPlayer_Lock; }
+
+    public bool Get_Enter_Door() { return m_bEntering; }
+    public void Set_Enter_Door(bool _bEnter) { m_bEntering = _bEnter; }
+
+    public bool Get_Ready_to_Teleport() { return m_bReady_to_Teleport; }
+    public void Set_Ready_to_Teleport(bool _bReady_to_Teleport) { m_bReady_to_Teleport = _bReady_to_Teleport; }
+
+    public bool Get_Do_Action() { return m_bLets_Action; }
+    public void Set_Do_Action(bool _bAction) { m_bLets_Action = _bAction; }
+
     public bool Get_Special_Counter() { return m_bSpecial_Counter; }
     public void Set_Special_Counter(bool _Special_Counter) { m_bSpecial_Counter = _Special_Counter; }
 
     void Awake()
     {
+        m_bCollision = false;
         coolTime = 1.5f;
         walking = false;
         usePortal = false;
@@ -52,25 +84,26 @@ public class PlayerController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate () {
-        float m_h = Input.GetAxis("Horizontal");
-        //float m_v = Input.GetAxis("Vertical");
+    void FixedUpdate ()
+    {
+        if (m_bPlayerLock == false)
+        {
+            float m_h = Input.GetAxis("Horizontal");
+            // 캐릭터 이동
+            Move(m_h);
+            // 애니매이션
+            Animating(m_h);
+        }
 
-        // 캐릭터 이동
-        Move(m_h);
-
-        // 애니매이션
-        Animating(m_h);
+        PlayerFloor();
 
         // 포탈 쿨타임
         PortalCoolDown();
-        
-	}
 
-    private void Update()
-    {
-        PlayerFloor();
+        // 충돌시 밀림
+        Player_Collision_Movement();
     }
+    
 
     // 현재 플레이어가 있는 층
     public int Get_PlayerFloor() { return m_iPlayer_Floor; }
@@ -95,7 +128,6 @@ public class PlayerController : MonoBehaviour {
             if (coolTime > 0f)
             {
                 coolTime -= Time.deltaTime;
-                //Debug.Log(coolTime);
                 if (coolTime <= 0f)
                 {
                     usePortal = false;
@@ -116,14 +148,6 @@ public class PlayerController : MonoBehaviour {
             m_iPlayer_Floor = 3;
         else if (this.transform.position.y > 7.5f && this.transform.position.y < 10.2f)
             m_iPlayer_Floor = 4;
-
-        Debug.Log("Player의 현재 층 : " + m_iPlayer_Floor.ToString());
-    }
-
-    // 플레이어 액션키 Z
-    void ActionKey()
-    {
-
     }
 
     // 플레이어 좌우 이동
@@ -133,8 +157,6 @@ public class PlayerController : MonoBehaviour {
         // 두개의 키조합을 사용하면 벡터가 1.4가 됨으로 nomalized 해줌
         // Time.deltaTime 은 Update() 를 호출하는 간격
         m_vCharPosition = m_vCharPosition * m_fSpeed * Time.deltaTime;
-
-        //Debug.Log(m_vCharPosition);
         
         
         // 트랜스폼
@@ -148,8 +170,6 @@ public class PlayerController : MonoBehaviour {
 
     void Animating(float _h)
     {
-
-        //Debug.Log("Ani");
         // _h 가 0 이냐 아니냐에 따른 true, false 반환
         // 수평축을 눌렀나? 수직축을 눌렀나? 를 알기위함
         walking = _h != 0f;
@@ -169,7 +189,87 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
-            //this.transform.rotation = new Quaternion(0f, 90f, 0f, 0f);
         }
     }
+
+    // DoorAction
+    public void into_the_Door()
+    {
+        if (m_bEntering == true)
+        {
+            if (m_bSetting_Complete == false)
+            {
+                m_bPlayerLock = true;
+
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 360f, 0f));
+                m_bSetting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+            
+            if (this.transform.position.z >= 1.2f)
+            {
+                m_bSetting_Complete = false;
+                m_bReady_to_Teleport = true;
+                m_bEntering = false;
+            }
+        }
+    }
+    public void out_the_Door()
+    {
+        if (m_bEntering == false)
+        {
+            if (m_bSetting_Complete == false)
+            {
+                m_bReady_to_Teleport = false;
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+
+                m_bSetting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+            
+            if (this.transform.position.z <= m_fz)
+            {
+                m_bSetting_Complete = false;
+                m_bPlayerLock = false;
+            }
+        }
+    }
+    
+    void Player_Collision_Movement()
+    {
+        if(m_bCollision == true)
+        {
+            m_bPlayerLock = true; // 플레이어 잠시 키입력 불가
+
+            m_PlayerRigidbody.AddForce(new Vector3(m_fCollision_Direction * m_fCollision_Power, 0f, 0f));
+
+            m_fCollision_Power -= 3.0f;
+            if(m_fCollision_Power < 0f)
+            {
+                m_fCollision_Power = 0;
+                m_bCollision = false;
+                m_bPlayerLock = false;
+            }
+        }
+    }
+    
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Enemy")
+        {
+            if(collision.gameObject.transform.position.x > this.transform.position.x)
+            {
+                m_fCollision_Direction = -1;
+            }
+            else if (collision.gameObject.transform.position.x < this.transform.position.x)
+            {
+                m_fCollision_Direction = 1;
+            }
+            m_bPlayer_Health -= 1;
+            m_bCollision = true;
+        }
+    }
+    
 }

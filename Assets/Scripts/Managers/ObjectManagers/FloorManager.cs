@@ -17,16 +17,16 @@ public class FloorManager : MonoBehaviour {
     float height = 2.55f;
 
     // 한 층 x 축 스케일
-    float m_fWidthScale = 1f;
+    //float m_fWidthScale = 1f;
 
     private void Awake()
     {
-        m_Floor = GameObject.FindGameObjectWithTag("Floor");
+        m_Floor = GameObject.FindGameObjectWithTag("Floors");
 
         m_FloorList = new List<GameObject>();
 
         // 층 크기, 위치 초기화
-        m_Floor.transform.position = new Vector3(5f, 0f, -0.5f);
+        m_Floor.transform.position = new Vector3(0f, 0f, 1.5f);
 
         // 리스트 삽입
         m_FloorList.Add(m_Floor);
@@ -34,13 +34,14 @@ public class FloorManager : MonoBehaviour {
         createFloor();
     }
     // Use this for initialization
-    void createFloor () {
+    void createFloor()
+    {
         // 16 은 나중에 Stage에 따른 층 타일갯수를 받아오는것으로 변경
-		for(int i = 1; i < Math.Sqrt(16); ++i)
+        for (int i = 1; i < Math.Sqrt(16); ++i)
         {
-            FloorClone = Instantiate(m_Floor, new Vector3(m_FloorList[i - 1].transform.position.x, m_FloorList[i-1].transform.position.y + height, m_FloorList[i - 1].transform.position.z), Quaternion.identity);
+            FloorClone = Instantiate(m_Floor, new Vector3(m_FloorList[i - 1].transform.position.x, m_FloorList[i - 1].transform.position.y + height, m_FloorList[i - 1].transform.position.z), Quaternion.identity);
 
             m_FloorList.Add(FloorClone);
         }
-	}
+    }
 }

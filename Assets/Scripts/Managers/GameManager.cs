@@ -44,7 +44,6 @@ public class GameManager : MonoBehaviour {
 
     private void AI_4_Switch()
     {
-        Debug.Log("SpecialCounter : " + playerCtrl.Get_Special_Counter().ToString());
         if (playerCtrl.Get_Special_Counter() == true)
             enemy.Set_AI_4(true);
     }

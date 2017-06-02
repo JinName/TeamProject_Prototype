@@ -80,7 +80,7 @@ public class EnemyAI : MonoBehaviour {
         m_Rigidbody = GetComponent<Rigidbody>();
 
         // 적 이동 속도
-        m_fEnmeySpeed = 20.0f;
+        m_fEnmeySpeed = 12.0f;
 
         // 상태값 랜덤 초기화 / 임시값 1
         //m_iState_AI = Random.Range(1, 4); 4는 특수 상태
@@ -92,7 +92,6 @@ public class EnemyAI : MonoBehaviour {
 
         m_iState_AI = 1;
         m_bAI_On = true;
-        Debug.Log(m_iState_AI);
 
         // 시작층 = 4
         m_iEnemyFloor = 4;
@@ -128,8 +127,6 @@ public class EnemyAI : MonoBehaviour {
             m_iEnemyFloor = 3;
         else if (this.transform.position.y > 7.5f && this.transform.position.y < 10.2f)
             m_iEnemyFloor = 4;
-
-        Debug.Log("Enemy 현재 층 : " + m_iEnemyFloor.ToString());
     }
 
     // 현재 층 반환
@@ -168,7 +165,6 @@ public class EnemyAI : MonoBehaviour {
             if (m_fCooltime > 0f)
             {
                 m_fCooltime -= Time.deltaTime;
-                //Debug.Log(coolTime);
                 if (m_fCooltime <= 0f)
                 {
                     usePortal = false;
@@ -197,7 +193,6 @@ public class EnemyAI : MonoBehaviour {
     // AI 상태에 따른 움직임
     private void AI_Move()
     {
-        //Debug.Log(Player_in_Special);
         // 플레이어가 특수타일 점령 중 이면 AI 번호 4로 바꿈
         if (Setting_AI_4 == false)
         {
@@ -214,14 +209,13 @@ public class EnemyAI : MonoBehaviour {
         // AI 가 중복되지않게 랜덤으로 선택
         if (m_bAI_On == false)
         {
-            //Debug.Log("False");
-            m_Portal_Manager.Reset_Portal_Useable();
+            //m_Portal_Manager.Reset_Portal_Useable();
 
             int temp = Random.Range(0, stateList.Count);
             m_iState_AI = stateList[temp];
             stateList.Add(3);
 
-            m_fEnmeySpeed = 20f;
+            m_fEnmeySpeed = 12f;
             m_bSetting_Complete = false;
             usePortal = false;
             m_bAI_On = true;
@@ -230,26 +224,22 @@ public class EnemyAI : MonoBehaviour {
 
         if (m_bAI_On == true)
         {
-            if (m_iState_AI == 1)
-            {
-                Debug.Log("AI_1");
+            //if (m_iState_AI == 1)
+            //{
                 AI_1();
-            }
-            else if (m_iState_AI == 2)
-            {
-                Debug.Log("AI_2");
-                AI_2();
-            }
-            else if (m_iState_AI == 3)
-            {
-                Debug.Log("AI_3");
-                AI_3();
-            }
-            else if (m_iState_AI == 4)
-            {
-                Debug.Log("AI_4");
-                AI_4();
-            }
+            //}
+            //else if (m_iState_AI == 2)
+            //{
+            //    AI_2();
+            //}
+            //else if (m_iState_AI == 3)
+            //{
+            //    AI_3();
+            //}
+            //else if (m_iState_AI == 4)
+            //{
+            //    AI_4();
+            //}
         }
     }
 
@@ -321,7 +311,6 @@ public class EnemyAI : MonoBehaviour {
         // 매개변수로 들어간 층 수에 존재하는 가까운 포탈 위치 벡터 반환
         if (m_bSetting_Complete == false)
         {
-            Debug.Log("Setting");
             m_vTarget = m_Portal_Manager.Search_Close_Portal(m_iEnemyFloor, this.transform.position);
             m_fOffset = m_vTarget.x - this.transform.position.x;
 
@@ -355,7 +344,7 @@ public class EnemyAI : MonoBehaviour {
     {
         if (m_bSetting_Complete == false)
         {
-            m_fEnmeySpeed = 30f;
+            m_fEnmeySpeed = 12f;
 
             if (m_iEnemyFloor == playerCtrl.Get_PlayerFloor())
             {

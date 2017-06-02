@@ -9,8 +9,6 @@ public class TileManager : MonoBehaviour {
     // 타일 해당 타일 로테이션 함수
     GameObject m_Tile;
     GameObject m_Trigger;
-    //GameObject m_Tile2;
-    //GameObject m_Trigger2;
 
     GameObject TileClone;
     GameObject TriggerClone;
@@ -115,14 +113,13 @@ public class TileManager : MonoBehaviour {
             {
                 if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isConquered() == true)
                 {
-                    Debug.Log("in Set Con");
                     // 특수타일이 점령된 층의 다른 타일들이 다시 돌아가지 않게 셋팅하는 for 문
                     for (int j = (int)Mathf.Sqrt(16) * (m_TileList[i].GetComponent<Tile>().Get_Floor() - 1);
                         j < (Mathf.Sqrt(16) * (m_TileList[i].GetComponent<Tile>().Get_Floor() - 1)) + Mathf.Sqrt(16); ++j)
                     {
                         m_TriggerList[j].GetComponent<TriggerQuad>().Set_isConquered(true);
                     }
-                }
+                }                
             }
 
             if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_TriggerSwitch() == true)
