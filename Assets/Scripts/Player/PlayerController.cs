@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour {
     // 플레이어 초기 위치
     float m_fx = 7.5f;
     float m_fy = 0.1f;
-    float m_fz = -0.4f;
+    float m_fz = -0.8f;
 
     // x축 max, min
     float max_x = 8.2f;
@@ -236,7 +236,49 @@ public class PlayerController : MonoBehaviour {
             }
         }
     }
-    
+
+    // FenceAction
+    public void into_the_Fence()
+    {
+        if (m_bEntering == true)
+        {
+            if (m_bSetting_Complete == false)
+            {
+                m_bPlayerLock = true;
+                m_bSetting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (this.transform.position.x >= 1.2f)
+            {
+                m_bSetting_Complete = false;
+                m_bReady_to_Teleport = true;
+                m_bEntering = false;
+            }
+        }
+    }
+    public void out_the_Fence()
+    {
+        if (m_bEntering == false)
+        {
+            if (m_bSetting_Complete == false)
+            {
+                m_bReady_to_Teleport = false;
+                m_bSetting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (this.transform.position.x <= m_fz)
+            {
+                m_bSetting_Complete = false;
+                m_bPlayerLock = false;
+            }
+        }
+    }
+
+    // 충돌시 움직임
     void Player_Collision_Movement()
     {
         if(m_bCollision == true)

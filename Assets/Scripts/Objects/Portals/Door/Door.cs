@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Portal_Door : MonoBehaviour {
+public class Door : MonoBehaviour {
 
     // 애니메이션용 변수
     Animator m_Animator;

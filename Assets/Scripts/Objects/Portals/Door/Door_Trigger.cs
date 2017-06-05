@@ -5,8 +5,8 @@ using UnityEngine;
 public class Door_Trigger : MonoBehaviour {
 
     // 트리거 충돌시 포탈 스위치 on
-    bool m_bPortal_is_On = false;
-    bool m_bLets_Teleport = false;
+    bool m_bPortal_is_On = false; // 애니매이션 셋팅용 스위치
+    bool m_bLets_Teleport = false; // 이동용 스위치
 
     public bool Get_Trigger_is_On() { return m_bPortal_is_On; }
 

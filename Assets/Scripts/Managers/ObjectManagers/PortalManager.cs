@@ -10,18 +10,9 @@ public class PortalManager : MonoBehaviour {
     // Enemy
     EnemyAI enemyAI;
     
-    // 일단 임시 포탈
+    // 문, 울타리
     GameObject m_Door;
-    GameObject m_Door_Trigger;
-    GameObject m_Com_Door;
-    GameObject m_Door_Clone;
-
-    /*
-    GameObject m_Red;
-    GameObject m_Green;
-    GameObject m_Blue;
-    GameObject m_Yellow;
-    */
+    GameObject m_Fence;
 
     GameObject m_PortalClone;
 
@@ -33,29 +24,15 @@ public class PortalManager : MonoBehaviour {
 
     private void Awake()
     {
-        //m_Door = GameObject.FindGameObjectWithTag("Portal_Door");
-        //m_Door_Trigger = GameObject.FindGameObjectWithTag("Door_Trigger");
-
         // 플레이어
         playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
         enemyAI = GameObject.Find("Enemy").GetComponent<EnemyAI>();
 
-        // 포탈
-        m_Com_Door = GameObject.Find("Portal_Door_Trigger");
-        
-        //m_Red = GameObject.FindGameObjectWithTag("Red1");
-        //m_Green = GameObject.FindGameObjectWithTag("Green1");
-        //m_Blue = GameObject.FindGameObjectWithTag("Blue1");
-        //m_Yellow = GameObject.FindGameObjectWithTag("Yellow1");
-
         m_PortalList = new List<GameObject>();
 
-        //m_PortalList.Add(m_Red);
-        //m_PortalList.Add(m_Green);
-        //m_PortalList.Add(m_Blue);
-        //m_PortalList.Add(m_Yellow);
-
-        m_PortalList.Add(m_Com_Door);
+        // 문, 울타리
+        m_Door = GameObject.Find("Portal_Door");
+        m_Fence = GameObject.Find("Portal_Fence");       
 
         createPortals();
     }
@@ -74,11 +51,11 @@ public class PortalManager : MonoBehaviour {
             {
                 if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Trigger_is_On() == true)
                 {
-                    m_PortalList[i].GetComponentInChildren<Portal_Door>().Set_Animation(true);
+                    m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(true);
                 }
                 else
                 {
-                    m_PortalList[i].GetComponentInChildren<Portal_Door>().Set_Animation(false);
+                    m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(false);
                 }
 
                 if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true)
@@ -121,8 +98,14 @@ public class PortalManager : MonoBehaviour {
 
     void createPortals()
     {
-        m_Door_Clone = Instantiate(m_Com_Door, new Vector3(m_Com_Door.transform.position.x + 3f, m_Com_Door.transform.position.y + 5.1f, m_Com_Door.transform.position.z), Quaternion.identity);
-        m_PortalList.Add(m_Door_Clone);
+        m_PortalList.Add(m_Door); // 0
+        m_PortalClone = Instantiate(m_Door, new Vector3(m_Door.transform.position.x + 3f, m_Door.transform.position.y + 5.1f, m_Door.transform.position.z), Quaternion.identity);
+        m_PortalList.Add(m_PortalClone); // 1
+
+        m_PortalList.Add(m_Fence); // 2
+        m_PortalClone = Instantiate(m_Fence, new Vector3(m_Fence.transform.position.x + 5.9f, m_Fence.transform.position.y + 2.5f, m_Fence.transform.position.z), Quaternion.identity);
+        m_PortalList.Add(m_PortalClone); //3
+
 
         // 임시 포탈 생성
         /*
