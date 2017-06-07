@@ -14,15 +14,15 @@ public class PlayerController : MonoBehaviour {
     delegate void DoorAction();
     DoorAction doorAction;
 
-    //bool m_bDoor
-
     bool m_bReady_to_Teleport = false;
     bool m_bPlayerLock = false;
     bool m_bLets_Action = false;
     bool m_bEntering = false;
+    float m_fOffset_x;
 
     // 플레이어 현재 층
     int m_iPlayer_Floor = 1;
+    int m_iDirection = 0;
 
     bool walking;
     bool usePortal;
@@ -95,15 +95,18 @@ public class PlayerController : MonoBehaviour {
             Animating(m_h);
         }
 
-        PlayerFloor();
-
-        // 포탈 쿨타임
-        PortalCoolDown();
 
         // 충돌시 밀림
         Player_Collision_Movement();
     }
-    
+
+    private void Update()
+    {
+        PlayerFloor();
+
+        // 포탈 쿨타임
+        PortalCoolDown();
+    }
 
     // 현재 플레이어가 있는 층
     public int Get_PlayerFloor() { return m_iPlayer_Floor; }
@@ -181,10 +184,12 @@ public class PlayerController : MonoBehaviour {
             if (_h < 0f)
             {
                 this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                m_iDirection = -1;
             }
             else if (_h > 0f)
             {
                 this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                m_iDirection = 1;
             }
         }
         else
@@ -244,17 +249,27 @@ public class PlayerController : MonoBehaviour {
         {
             if (m_bSetting_Complete == false)
             {
+                Debug.Log("Setting_Fence");
                 m_bPlayerLock = true;
+
+                if(m_iPlayer_Floor == 1 && m_iDirection == 1) // 1층 울타리에서 오른쪽을 보고 탈 경우
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iPlayer_Floor == 2 && m_iDirection == -1)
+                {
+                    Debug.Log("Rotate");
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
                 m_bSetting_Complete = true;
             }
-
+            Debug.Log("into_the_Fence");
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
 
-            if (this.transform.position.x >= 1.2f)
+            if (m_bReady_to_Teleport == true)
             {
-                m_bSetting_Complete = false;
-                m_bReady_to_Teleport = true;
                 m_bEntering = false;
+                m_bSetting_Complete = false;
             }
         }
     }
@@ -264,16 +279,91 @@ public class PlayerController : MonoBehaviour {
         {
             if (m_bSetting_Complete == false)
             {
+                m_fOffset_x = this.transform.position.x;
                 m_bReady_to_Teleport = false;
+                m_bSetting_Complete = true;
+                Debug.Log("이동 후 좌표 : " + m_fOffset_x.ToString());
+            }
+            Debug.Log("out_the_Fence");
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            Debug.Log("이동 후에 좌표 : " + m_fOffset_x.ToString());
+            if (m_fOffset_x >= max_x)
+            {
+                if(this.transform.position.x <= max_x)
+                {
+                    m_bPlayerLock = false;
+                    m_bSetting_Complete = false;
+                }
+            }    
+            else if(m_fOffset_x <= min_x)
+            {
+                if(this.transform.position.x >= min_x)
+                {
+                    m_bPlayerLock = false;
+                    m_bSetting_Complete = false;
+                }
+            }
+        }
+    }
+
+    // TunnelAction
+    public void into_the_Tunnel()
+    {
+        if (m_bEntering == true)
+        {
+            if (m_bSetting_Complete == false)
+            {
+                m_bPlayerLock = true;
+
+                if (m_iPlayer_Floor == 2 && m_iDirection == 1) // 2층 터널에서 오른쪽을 보고 탈 경우
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iPlayer_Floor == 4 && m_iDirection == -1)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
                 m_bSetting_Complete = true;
             }
 
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
 
-            if (this.transform.position.x <= m_fz)
+            if (m_bReady_to_Teleport == true)
             {
+                m_bEntering = false;
                 m_bSetting_Complete = false;
-                m_bPlayerLock = false;
+            }
+        }
+    }
+    public void out_the_Tunnel()
+    {
+        if (m_bEntering == false)
+        {
+            if (m_bSetting_Complete == false)
+            {
+                m_fOffset_x = this.transform.position.x;
+                m_bReady_to_Teleport = false;
+                m_bSetting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+            
+            if (m_fOffset_x >= max_x)
+            {
+                if (this.transform.position.x <= max_x)
+                {
+                    m_bPlayerLock = false;
+                    m_bSetting_Complete = false;
+                }
+            }
+            else if (m_fOffset_x <= min_x)
+            {
+                if (this.transform.position.x >= min_x)
+                {
+                    m_bPlayerLock = false;
+                    m_bSetting_Complete = false;
+                }
             }
         }
     }

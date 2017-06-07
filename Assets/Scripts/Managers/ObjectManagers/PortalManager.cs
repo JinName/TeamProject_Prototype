@@ -10,15 +10,25 @@ public class PortalManager : MonoBehaviour {
     // Enemy
     EnemyAI enemyAI;
     
-    // 문, 울타리
-    GameObject m_Door;
-    GameObject m_Fence;
+    // 포탈
+    GameObject m_Door;      // 문
+    GameObject m_Fence;     // 울타리
+    GameObject m_Tunnel;    // 터널
+    GameObject m_Blink;     // 순간이동
 
     GameObject m_PortalClone;
 
+    GameObject m_Fence_Teleport_Trigger;
+    List<GameObject> m_Fence_Teleport_Trigger_List;
+
+    GameObject m_Tunnel_Teleport_Trigger;
+    List<GameObject> m_Tunnel_Teleport_Trigger_List;
+
     // 포탈 리스트
-    // [0, 1] : 문
     List<GameObject> m_PortalList;
+    List<GameObject> m_FenceList;
+    List<GameObject> m_TunnelList;
+    List<GameObject> m_BlinkList;
     // 포탈 갯수
     int m_iPortal_Count = 2;
 
@@ -28,21 +38,43 @@ public class PortalManager : MonoBehaviour {
         playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
         enemyAI = GameObject.Find("Enemy").GetComponent<EnemyAI>();
 
-        m_PortalList = new List<GameObject>();
+        m_PortalList = new List<GameObject>(); // 문
+        m_FenceList = new List<GameObject>(); // 울타리
+        m_TunnelList = new List<GameObject>(); // 터널
+        m_BlinkList = new List<GameObject>(); // 순간이동
+
+        m_Fence_Teleport_Trigger_List = new List<GameObject>();
+        m_Tunnel_Teleport_Trigger_List = new List<GameObject>();
 
         // 문, 울타리
         m_Door = GameObject.Find("Portal_Door");
-        m_Fence = GameObject.Find("Portal_Fence");       
+        m_Fence = GameObject.Find("Portal_Fence");
+        m_Tunnel = GameObject.Find("Portal_Tunnel");
+        m_Blink = GameObject.Find("Portal_Blink");
 
+        m_Fence_Teleport_Trigger = GameObject.Find("Fence_Teleport_Trigger");
+        m_Fence_Teleport_Trigger_List.Add(m_Fence_Teleport_Trigger);
+        m_PortalClone = Instantiate(m_Fence_Teleport_Trigger, new Vector3(10.0f, 3.5f, -0.45f), Quaternion.identity);
+        m_Fence_Teleport_Trigger_List.Add(m_PortalClone);
+
+        m_Tunnel_Teleport_Trigger = GameObject.Find("Tunnel_Teleport_Trigger");
+        m_Tunnel_Teleport_Trigger_List.Add(m_Tunnel_Teleport_Trigger);
+        m_PortalClone = Instantiate(m_Tunnel_Teleport_Trigger, new Vector3(10.0f, 8.7f, -0.45f), Quaternion.identity);
+        m_Tunnel_Teleport_Trigger_List.Add(m_PortalClone);
+
+        // 포탈 복사 생성
         createPortals();
     }
 
     private void Update()
     {
         Door_Check();
-        //onPortalCheck();
+        Fence_Check();
+        Tunnel_Check();
+        Blink_Check();
     }
     
+    // Door
     void Door_Check()
     {
         if (playerCtrl.Get_Enter_Door() == false)
@@ -62,7 +94,6 @@ public class PortalManager : MonoBehaviour {
                 {
                     if (m_bSetting_Complete == false)
                     {
-                        Debug.Log("Setting");
                         playerCtrl.Set_Enter_Door(true);
                         m_bSetting_Complete = true;
                     }
@@ -72,7 +103,6 @@ public class PortalManager : MonoBehaviour {
         if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true ||
             m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true)
         {
-            Debug.Log("DoorAction");
             playerCtrl.into_the_Door();
             if (playerCtrl.Get_Ready_to_Teleport() == true)
             {
@@ -94,7 +124,123 @@ public class PortalManager : MonoBehaviour {
             }
         }        
     }
-    
+
+    // Fence
+    void Fence_Check()
+    {
+        if (playerCtrl.Get_Enter_Door() == false)
+        {
+            for(int i = 0; i < 2; i++)
+            {
+                // 스위치 켜지면
+                if(m_FenceList[i].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+                {
+                    if (m_bSetting_Complete == false)
+                    {
+                        playerCtrl.Set_Enter_Door(true);
+                        m_bSetting_Complete = true;
+                    }
+                }
+            }
+        }
+
+        if (m_FenceList[0].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true ||
+               m_FenceList[1].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+        {
+            playerCtrl.into_the_Fence();
+            if (playerCtrl.Get_Ready_to_Teleport() == true)
+            {
+                if (m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                {
+                    m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
+                    playerCtrl.Set_PlayerPosition(m_Fence_Teleport_Trigger_List[1].transform.position);
+                }
+                else if (m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                {
+                    m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
+                    playerCtrl.Set_PlayerPosition(m_Fence_Teleport_Trigger_List[0].transform.position);
+                }
+            }
+            playerCtrl.out_the_Fence();
+
+            if (playerCtrl.Get_Player_Lock() == false)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    m_FenceList[i].GetComponentInChildren<Fence_Trigger>().Set_Switch(false);
+                    m_bSetting_Complete = false;
+                }
+            }
+        }
+    }
+
+    // Tunnel
+    void Tunnel_Check()
+    {
+        if (playerCtrl.Get_Enter_Door() == false)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                // 스위치 켜지면
+                if (m_TunnelList[i].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+                {
+                    if (m_bSetting_Complete == false)
+                    {
+                        Debug.Log("Setting");
+                        playerCtrl.Set_Enter_Door(true);
+                        m_bSetting_Complete = true;
+                    }
+                }
+            }
+        }
+
+        if (m_TunnelList[0].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true ||
+               m_TunnelList[1].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+        {
+            Debug.Log("true");
+
+            playerCtrl.into_the_Tunnel();
+            if (playerCtrl.Get_Ready_to_Teleport() == true)
+            {
+                Debug.Log("Ready_to_Teleport");
+                if (m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                {
+                    m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
+                    playerCtrl.Set_PlayerPosition(m_Tunnel_Teleport_Trigger_List[1].transform.position);
+                }
+                else if (m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                {
+                    m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
+                    playerCtrl.Set_PlayerPosition(m_Tunnel_Teleport_Trigger_List[0].transform.position);
+                }
+            }
+            playerCtrl.out_the_Tunnel();
+
+            if (playerCtrl.Get_Player_Lock() == false)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    m_TunnelList[i].GetComponentInChildren<Tunnel_Trigger>().Set_Switch(false);
+                    m_bSetting_Complete = false;
+                }
+            }
+        }
+    }
+
+    // Blink
+    void Blink_Check()
+    {
+        if(m_BlinkList[0].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+        {
+            playerCtrl.Set_PlayerPosition(m_BlinkList[1].transform.position);
+            m_BlinkList[0].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+        }
+        else if(m_BlinkList[1].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+        {
+            playerCtrl.Set_PlayerPosition(m_BlinkList[0].transform.position);
+            m_BlinkList[1].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+        }
+    }
 
     void createPortals()
     {
@@ -102,25 +248,17 @@ public class PortalManager : MonoBehaviour {
         m_PortalClone = Instantiate(m_Door, new Vector3(m_Door.transform.position.x + 3f, m_Door.transform.position.y + 5.1f, m_Door.transform.position.z), Quaternion.identity);
         m_PortalList.Add(m_PortalClone); // 1
 
-        m_PortalList.Add(m_Fence); // 2
-        m_PortalClone = Instantiate(m_Fence, new Vector3(m_Fence.transform.position.x + 5.9f, m_Fence.transform.position.y + 2.5f, m_Fence.transform.position.z), Quaternion.identity);
-        m_PortalList.Add(m_PortalClone); //3
+        m_FenceList.Add(m_Fence); // 0
+        m_PortalClone = Instantiate(m_Fence, new Vector3(m_Fence.transform.position.x + 5.8f, m_Fence.transform.position.y + 2.5f, m_Fence.transform.position.z), Quaternion.identity);
+        m_FenceList.Add(m_PortalClone); // 1
 
+        m_TunnelList.Add(m_Tunnel); // 0
+        m_PortalClone = Instantiate(m_Tunnel, new Vector3(m_Fence.transform.position.x + 5.8f, m_Fence.transform.position.y + 7.6f, m_Fence.transform.position.z), Quaternion.identity);
+        m_TunnelList.Add(m_PortalClone); // 1
 
-        // 임시 포탈 생성
-        /*
-        m_PortalClone = Instantiate(m_Red, new Vector3(m_Red.transform.position.x + 3f, m_Red.transform.position.y + 5.1f, m_Red.transform.position.z), Quaternion.identity);
-        m_PortalList.Add(m_PortalClone);
-
-        m_PortalClone = Instantiate(m_Green, new Vector3(m_Green.transform.position.x + 6f, m_Green.transform.position.y + 5.1f, m_Green.transform.position.z), Quaternion.identity);
-        m_PortalList.Add(m_PortalClone);
-
-        m_PortalClone = Instantiate(m_Blue, new Vector3(m_Blue.transform.position.x + 6f, m_Blue.transform.position.y + 2.55f, m_Blue.transform.position.z), Quaternion.identity);
-        m_PortalList.Add(m_PortalClone);
-
-        m_PortalClone = Instantiate(m_Yellow, new Vector3(m_Yellow.transform.position.x - 3f, m_Yellow.transform.position.y + 2.55f, m_Yellow.transform.position.z), Quaternion.identity);
-        m_PortalList.Add(m_PortalClone);
-        */
+        m_BlinkList.Add(m_Blink); // 0
+        m_PortalClone = Instantiate(m_Blink, new Vector3(m_Blink.transform.position.x - 2.8f, m_Blink.transform.position.y + 2.5f, m_Blink.transform.position.z), Quaternion.identity);
+        m_BlinkList.Add(m_PortalClone); // 1
 
         //파트너 포탈 셋팅
 

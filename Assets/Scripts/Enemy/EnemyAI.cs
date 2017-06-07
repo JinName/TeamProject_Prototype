@@ -72,7 +72,7 @@ public class EnemyAI : MonoBehaviour {
         playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
 
         // Portal Manager
-        m_Portal_Manager = GameObject.Find("Portals").GetComponent<PortalManager>();
+        m_Portal_Manager = GameObject.Find("PortalManagerObj").GetComponent<PortalManager>();
 
         // Animator
         m_Animator = GetComponent<Animator>();
