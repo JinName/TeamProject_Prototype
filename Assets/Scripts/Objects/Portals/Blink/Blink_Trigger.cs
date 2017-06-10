@@ -9,6 +9,9 @@ public class Blink_Trigger : MonoBehaviour {
     // Switch
     bool m_bSwitch = false;
     bool m_bEnemy_Used = false;
+    bool isPlayer = false;
+
+    public bool Get_isPlayer() { return isPlayer; }
 
     public void Set_Enemy_Used(bool _bEnemy_Used) { m_bEnemy_Used = _bEnemy_Used; }
 
@@ -28,6 +31,7 @@ public class Blink_Trigger : MonoBehaviour {
             if (m_bEnemy_Used == false)
             {
                 m_bSwitch = true;
+                isPlayer = false;
                 m_Enemy.Set_Enemy_use_Portal(true);
             }
             Debug.Log("Enemy In Blink Trigger");
@@ -41,6 +45,7 @@ public class Blink_Trigger : MonoBehaviour {
             if(Input.GetKeyDown(KeyCode.Z))
             {
                 m_bSwitch = true;
+                isPlayer = true;
                 m_Player.Set_Player_use_Portal(true);
             }
         }

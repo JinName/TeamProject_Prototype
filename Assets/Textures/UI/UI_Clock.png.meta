@@ -1,0 +1,163 @@
+fileFormatVersion: 2
+guid: f84594fee7fb8bd4aaa6b6b161c99892
+timeCreated: 1497113978
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: UI_Clock_0
+    21300002: UI_Clock_1
+    21300004: UI_Clock_2
+    21300006: UI_Clock_3
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Clock_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 5
+        width: 104
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: UI_Clock_1
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 5
+        width: 104
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: UI_Clock_2
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 5
+        width: 104
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: UI_Clock_3
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 5
+        width: 104
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline:
+    - - {x: -211.5, y: 52.5}
+      - {x: -229.5, y: 46.5}
+      - {x: -229.5, y: -55.5}
+      - {x: -121.5, y: -55.5}
+      - {x: -121.5, y: 29.5}
+      - {x: -176.5, y: 52.5}
+    - - {x: -116.5, y: 52.5}
+      - {x: -120.5, y: 48.5}
+      - {x: -120.5, y: -0.5}
+      - {x: -107.5, y: -40.5}
+      - {x: -91.5, y: -55.5}
+      - {x: -37.5, y: -55.5}
+      - {x: -12.5, y: -46.5}
+      - {x: -12.5, y: 27.5}
+      - {x: -42.5, y: 52.5}
+    - - {x: -2.5, y: 52.5}
+      - {x: -2.5, y: -47.5}
+      - {x: -1.5, y: -50.5}
+      - {x: 22.5, y: -55.5}
+      - {x: 90.5, y: -55.5}
+      - {x: 105.5, y: -45.5}
+      - {x: 105.5, y: 29.5}
+      - {x: 91.5, y: 52.5}
+    - - {x: 130.5, y: 52.5}
+      - {x: 116.5, y: 47.5}
+      - {x: 116.5, y: -16.5}
+      - {x: 138.5, y: -55.5}
+      - {x: 217.5, y: -55.5}
+      - {x: 224.5, y: -51.5}
+      - {x: 224.5, y: 28.5}
+      - {x: 170.5, y: 52.5}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

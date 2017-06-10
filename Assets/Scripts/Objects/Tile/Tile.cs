@@ -46,11 +46,10 @@ public class Tile : MonoBehaviour {
 
     private void Update()
     {
-            if (m_bRotateSwitch == true)
-            {
-                TileRotate();
-            }
-        
+        if (m_bRotateSwitch == true)
+        {
+            TileRotate();
+        }
     }
 
     public void TileRotate()

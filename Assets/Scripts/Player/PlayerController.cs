@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    int m_bPlayer_Health = 3;
+    int m_iPlayer_Health = 3;
     // 플레이어 충돌
     bool m_bCollision;
-    //bool m_bLock; // 충돌시 플레이어 입력 못하게
+    int m_iCollision_Floor;
+
+    List<int> m_iFloor_Num_List;
+
     bool m_bSetting_Complete = false;
 
     // 함수포인터화
@@ -42,11 +45,14 @@ public class PlayerController : MonoBehaviour {
     float max_x = 8.2f;
     float min_x = 1.7f;
 
+    // 캐릭터 가만히 있는 시간
+    float m_fStand_Time = 0f;
     
     // 캐릭터 좌표 벡터
     Vector3 m_vCharPosition;
     float m_fCollision_Direction; // 밀려날 방향
-    float m_fCollision_Power = 38.0f; // 밀려나는 힘
+    float m_fCollision_Power = 33.0f; // 밀려나는 힘
+    //float m_fCollision_Power = 1.0f;
 
     // 캐릭터 스피드 밖에서 참조 가능
     public float m_fSpeed = 6f;
@@ -58,6 +64,10 @@ public class PlayerController : MonoBehaviour {
 
     // 특수타일 카운터 스위치
     bool m_bSpecial_Counter = false;
+
+    public bool Get_Player_Collision() { return m_bCollision; }
+
+    public int Get_Player_HP() { return m_iPlayer_Health; }
 
     public bool Get_Player_use_Portal() { return m_bPlayer_use_Portal; }
     public void Set_Player_use_Portal(bool _bPlayer_use_Portal) { m_bPlayer_use_Portal = _bPlayer_use_Portal; }
@@ -83,6 +93,12 @@ public class PlayerController : MonoBehaviour {
         coolTime = 1.5f;
         walking = false;
         usePortal = false;
+
+        m_iFloor_Num_List = new List<int>();
+        for(int i = 0; i < 4; i++)
+        {
+            m_iFloor_Num_List.Add(i + 1);
+        }
         m_Animator = GetComponentInChildren<Animator>();
         
         m_PlayerRigidbody = GetComponent<Rigidbody>();
@@ -100,6 +116,21 @@ public class PlayerController : MonoBehaviour {
             Move(m_h);
             // move 애니매이션
             Animating(m_h);
+
+            if(m_h == 0f)
+            {
+                m_fStand_Time += Time.deltaTime;
+            }
+            else
+            {
+                m_fStand_Time = 0f;
+            }
+
+            if(m_fStand_Time > 2f)
+            {
+                JumpAnimation();
+                m_fStand_Time = 0f;
+            }
         }
         // 충돌 애니메이션
         Collision_Animating();
@@ -115,6 +146,8 @@ public class PlayerController : MonoBehaviour {
         // 포탈 쿨타임
         PortalCoolDown();
     }
+
+    public void JumpAnimation() { m_Animator.SetTrigger("isJump"); }
 
     // 현재 플레이어가 있는 층
     public int Get_PlayerFloor() { return m_iPlayer_Floor; }
@@ -218,7 +251,6 @@ public class PlayerController : MonoBehaviour {
             if (m_bSetting_Complete == false)
             {
                 m_bPlayerLock = true;
-
                 this.transform.rotation = Quaternion.Euler(new Vector3(0f, 360f, 0f));
                 m_bSetting_Complete = true;
             }
@@ -274,7 +306,15 @@ public class PlayerController : MonoBehaviour {
                     Debug.Log("Rotate");
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
-                m_bSetting_Complete = true;
+                else if(m_iPlayer_Floor == 1 && m_iDirection == -1)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iPlayer_Floor == 2 && m_iDirection == 1)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
+                    m_bSetting_Complete = true;
             }
             Debug.Log("into_the_Fence");
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
@@ -337,6 +377,14 @@ public class PlayerController : MonoBehaviour {
                 {
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
+                else if (m_iPlayer_Floor == 2 && m_iDirection == -1)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iPlayer_Floor == 4 && m_iDirection == 1)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
                 m_bSetting_Complete = true;
             }
 
@@ -390,17 +438,39 @@ public class PlayerController : MonoBehaviour {
             hit = true; // hit 애니메이션
 
             m_PlayerRigidbody.AddForce(new Vector3(m_fCollision_Direction * m_fCollision_Power, 0f, 0f));
+            //this.transform.Translate(new Vector3(m_fCollision_Direction * m_fCollision_Power, 0f, 0f));
 
             m_fCollision_Power -= 3.0f;
 
             if(m_fCollision_Power < 0f)
             {
-                m_fCollision_Power = 0;
+                m_fCollision_Power = 33f;
                 hit = false;
                 m_bCollision = false;
                 m_bPlayerLock = false;
+                Player_Position_Reset();
             }
         }
+    }
+
+    void Player_Position_Reset()
+    {
+        int temp = Random.Range(0, m_iFloor_Num_List.Count);
+        int temp_newFloor = m_iFloor_Num_List[temp];
+        float temp_Pos_X = Random.Range(min_x + 0.5f, max_x - 0.4f);
+        float temp_Pos_Y = 0f;
+
+
+        if (temp_newFloor == 1)
+            temp_Pos_Y = 1.2f;
+        else if (temp_newFloor == 2)
+            temp_Pos_Y = 3.4f;
+        else if (temp_newFloor == 3)
+            temp_Pos_Y = 6.0f;
+        else if (temp_newFloor == 4)
+            temp_Pos_Y = 8.6f;
+
+        Set_PlayerPosition(new Vector3(temp_Pos_X, temp_Pos_Y, m_fz));
     }
     
     private void OnCollisionEnter(Collision collision)
@@ -415,7 +485,9 @@ public class PlayerController : MonoBehaviour {
             {
                 m_fCollision_Direction = 1;
             }
-            m_bPlayer_Health -= 1;
+            //m_iPlayer_Health -= 1;
+            m_iCollision_Floor = m_iPlayer_Floor;
+            m_iFloor_Num_List.Remove(m_iCollision_Floor);
             m_bCollision = true;
         }
     }

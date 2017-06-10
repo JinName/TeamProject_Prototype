@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
-    //int m_ScreenWidth = 720;
-    //int m_ScreenHeight = 960;
+    int m_ScreenWidth = 1280;
+    int m_ScreenHeight = 720;
 	// Use this for initialization
 	void Awake () {
-        //Screen.SetResolution(m_ScreenWidth, m_ScreenHeight, true);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+        //this.GetComponent<Camera>().aspect = m_ScreenHeight / m_ScreenWidth;
+        Screen.SetResolution(m_ScreenWidth, m_ScreenHeight, false);
 	}
 }

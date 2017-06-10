@@ -82,7 +82,7 @@ public class PortalManager : MonoBehaviour {
     // Door
     void Door_Check()
     {
-        #region Player
+        #region Logic
         if (playerCtrl.Get_Player_use_Portal() == true)
         {
             if (playerCtrl.Get_Enter() == false)
@@ -108,8 +108,8 @@ public class PortalManager : MonoBehaviour {
                     }
                 }
             }
-            if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true ||
-                m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+            if ((m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true && m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_isPlayer() == true) ||
+                (m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true && m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_isPlayer() == true))
             {
                 playerCtrl.into_the_Door();
                 if (playerCtrl.Get_Ready_to_Teleport() == true)
@@ -137,10 +137,7 @@ public class PortalManager : MonoBehaviour {
                 }
             }
         }
-        #endregion
-
-        #region Enemy
-        if(m_Enemy.Get_Enemy_use_Portal() == true)
+        else if(m_Enemy.Get_Enemy_use_Portal() == true)
         {
             if (m_Enemy.Get_Enter() == false)
             {
@@ -165,8 +162,8 @@ public class PortalManager : MonoBehaviour {
                     }
                 }
             }
-            if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true ||
-                m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+            if ((m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true && m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_isPlayer() == false) ||
+                (m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true && m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_isPlayer() == false))
             {
                 m_Enemy.into_the_Door();
                 if (m_Enemy.Get_Ready_to_Teleport() == true)
@@ -202,7 +199,7 @@ public class PortalManager : MonoBehaviour {
     // Fence
     void Fence_Check()
     {
-        #region Player
+        #region Logic
         if (playerCtrl.Get_Player_use_Portal() == true)
         {
             if (playerCtrl.Get_Enter() == false)
@@ -221,8 +218,8 @@ public class PortalManager : MonoBehaviour {
                 }
             }
 
-            if (m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true ||
-                   m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+            if ((m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true && m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_isPlayer() == true) ||
+                   (m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true && m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_isPlayer() == true))
             {
                 playerCtrl.into_the_Fence();
                 if (playerCtrl.Get_Ready_to_Teleport() == true)
@@ -255,10 +252,7 @@ public class PortalManager : MonoBehaviour {
                 }
             }
         }
-        #endregion
-
-        #region Enemy
-        if (m_Enemy.Get_Enemy_use_Portal() == true)
+        else if (m_Enemy.Get_Enemy_use_Portal() == true)
         {
             if (m_Enemy.Get_Enter() == false)
             {
@@ -276,8 +270,8 @@ public class PortalManager : MonoBehaviour {
                 }
             }
 
-            if (m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true ||
-                   m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+            if ((m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true && m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_isPlayer() == false) ||
+                   (m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true && m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_isPlayer() == false))
             {
                 m_Enemy.into_the_Fence();
                 if (m_Enemy.Get_Ready_to_Teleport() == true)
@@ -318,7 +312,7 @@ public class PortalManager : MonoBehaviour {
     // Tunnel
     void Tunnel_Check()
     {
-        #region Player
+        #region Logic
         if (playerCtrl.Get_Player_use_Portal() == true)
         {
             if (playerCtrl.Get_Enter() == false)
@@ -338,8 +332,8 @@ public class PortalManager : MonoBehaviour {
                 }
             }
 
-            if (m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true ||
-                   m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+            if ((m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == true)||
+                   (m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == true))
             {
                 Debug.Log("true");
 
@@ -375,10 +369,7 @@ public class PortalManager : MonoBehaviour {
                 }
             }
         }
-        #endregion
-
-        #region Enemy
-        if (m_Enemy.Get_Enemy_use_Portal() == true)
+        else if (m_Enemy.Get_Enemy_use_Portal() == true)
         {
             if (m_Enemy.Get_Enter() == false)
             {
@@ -397,8 +388,8 @@ public class PortalManager : MonoBehaviour {
                 }
             }
 
-            if (m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true ||
-                   m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+            if ((m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == false) ||
+                   (m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == false))
             {
                 Debug.Log("true");
 
@@ -442,28 +433,25 @@ public class PortalManager : MonoBehaviour {
     // Blink
     void Blink_Check()
     {
-        #region Player
+        #region Logic
         if (playerCtrl.Get_Player_use_Portal() == true)
         {
-            if (m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            if (m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true && m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_isPlayer() == true)
             {
                 playerCtrl.Set_PlayerPosition(m_PortalList[7].transform.position);
                 m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
                 playerCtrl.Set_Player_use_Portal(false);
             }
-            else if (m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            else if (m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true && m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_isPlayer() == true)
             {
                 playerCtrl.Set_PlayerPosition(m_PortalList[6].transform.position);
                 m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
                 playerCtrl.Set_Player_use_Portal(false);
             }
         }
-        #endregion
-
-        #region Enemy
-        if (m_Enemy.Get_Enemy_use_Portal() == true)
+        else if (m_Enemy.Get_Enemy_use_Portal() == true)
         {
-            if (m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            if (m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true && m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_isPlayer() == false)
             {
                 m_Enemy.Set_EnemyPosition(m_PortalList[7].transform.position);
                 m_Enemy.Set_Enemy_use_Portal(false);
@@ -472,7 +460,7 @@ public class PortalManager : MonoBehaviour {
                 m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
                 m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
             }
-            else if (m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            else if (m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true && m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_isPlayer() == false)
             {
                 m_Enemy.Set_EnemyPosition(m_PortalList[6].transform.position);
                 m_Enemy.Set_Enemy_use_Portal(false);

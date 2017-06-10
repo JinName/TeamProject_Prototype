@@ -12,6 +12,9 @@ public class Door_Trigger : MonoBehaviour {
     bool m_bLets_Teleport = false; // 이동용 스위치
 
     bool m_bEnemy_Used = false;
+    bool isPlayer = false;
+
+    public bool Get_isPlayer() { return isPlayer; }
 
     public void Set_Enemy_Used(bool _bEnemy_Used) { m_bEnemy_Used = _bEnemy_Used; }
 
@@ -34,14 +37,7 @@ public class Door_Trigger : MonoBehaviour {
             m_bPortal_is_On = true;
         }
         
-        if(other.name.Contains("Enemy") && m_Enemy.Get_Trigger_is_Possible())
-        {
-            if (m_bEnemy_Used == false)
-            {
-                m_bLets_Teleport = true;
-                m_Enemy.Set_Enemy_use_Portal(true);
-            }
-        }
+        
     }
 
     private void OnTriggerStay(Collider other)
@@ -51,7 +47,22 @@ public class Door_Trigger : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 m_bLets_Teleport = true;
+                isPlayer = true;
                 m_Player.Set_Player_use_Portal(true);
+            }
+        }
+
+        if (other.name.Contains("Enemy") && m_Enemy.Get_Trigger_is_Possible())
+        {
+            if (m_bEnemy_Used == false)
+            {
+                if (this.transform.position.x + 0.2f > other.transform.position.x &&
+                    this.transform.position.x - 0.2f < other.transform.position.x)
+                {
+                    m_bLets_Teleport = true;
+                    isPlayer = false;
+                    m_Enemy.Set_Enemy_use_Portal(true);
+                }
             }
         }
     }

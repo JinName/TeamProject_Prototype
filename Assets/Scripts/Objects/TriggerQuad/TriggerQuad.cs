@@ -24,7 +24,7 @@ public class TriggerQuad : MonoBehaviour {
     bool m_bStopRotate = false;
 
     // 3초 점령 판별 변수
-    float m_fStayTime = 10f;
+    float m_fStayTime = 3.0f;
     bool m_bConquer;
 
 
@@ -101,7 +101,7 @@ public class TriggerQuad : MonoBehaviour {
                 if (m_bConquer == false)
                 {
                     m_bStay = true;
-                    playerCtrl.Set_Special_Counter(true);
+                    //playerCtrl.Set_Special_Counter(true);
                 }
 
                 m_fStayTime -= Time.deltaTime;
@@ -111,8 +111,8 @@ public class TriggerQuad : MonoBehaviour {
                     m_bSwitch = true;
                     m_bConquer = true;
                     m_iWhosTile = 2;
-                    m_fStayTime = 10f;
-                    playerCtrl.Set_Special_Counter(false);
+                    m_fStayTime = 3.0f;
+                    //playerCtrl.Set_Special_Counter(false);
                     enemy.Set_AI_4(false);
                     enemy.Set_AI_On(false);
                     enemy.Set_Setting(false);
@@ -128,9 +128,9 @@ public class TriggerQuad : MonoBehaviour {
         {
             if (other.name.Contains("Player") && m_iWhosTile == 1)
             {
-                m_fStayTime = 10f;
+                m_fStayTime = 3.0f;
                 m_bStay = false;
-                playerCtrl.Set_Special_Counter(false);
+                //playerCtrl.Set_Special_Counter(false);
 
                 enemy.Set_AI_4(false);
                 enemy.Set_AI_On(false);

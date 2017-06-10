@@ -13,6 +13,11 @@ public class TileManager : MonoBehaviour {
     GameObject TileClone;
     GameObject TriggerClone;
 
+    public GameObject SpecialCounter_Floor1;
+    public GameObject SpecialCounter_Floor2;
+    public GameObject SpecialCounter_Floor3;
+    public GameObject SpecialCounter_Floor4;
+
     // 타일 배치 간격
     float height = 2.55f;
     float width = 1.9f;
@@ -31,6 +36,8 @@ public class TileManager : MonoBehaviour {
     int m_iSunScore;
     int m_iMoonScore;
 
+    public int Get_MoonScore() { return m_iMoonScore; }
+
     private void Awake()
     {
         Init();
@@ -40,6 +47,7 @@ public class TileManager : MonoBehaviour {
     private void Update()
     {
         inTrigger();
+        TileScore();
     }
 
     public void Init()
@@ -111,8 +119,41 @@ public class TileManager : MonoBehaviour {
         {
             if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isSpecial() == true)
             {
+                if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isStay() == true)
+                {
+
+                    if (i < 4)
+                        SpecialCounter_Floor1.SetActive(true);
+                    else if (i >= 4 && i < 8)
+                        SpecialCounter_Floor2.SetActive(true);
+                    else if (i >= 8 && i < 12)
+                        SpecialCounter_Floor3.SetActive(true);
+                    else if (i >= 12 && i < 16)
+                        SpecialCounter_Floor4.SetActive(true);
+                }
+                else
+                {
+                    if (i < 4)
+                        SpecialCounter_Floor1.SetActive(false);
+                    else if (i >= 4 && i < 8)
+                        SpecialCounter_Floor2.SetActive(false);
+                    else if (i >= 8 && i < 12)
+                        SpecialCounter_Floor3.SetActive(false);
+                    else if (i >= 12 && i < 16)
+                        SpecialCounter_Floor4.SetActive(false);
+                }
+
                 if (m_TriggerList[i].GetComponent<TriggerQuad>().Get_isConquered() == true)
                 {
+                    if (i < 4)
+                        SpecialCounter_Floor1.SetActive(false);
+                    else if (i >= 4 && i < 8)
+                        SpecialCounter_Floor2.SetActive(false);
+                    else if (i >= 8 && i < 12)
+                        SpecialCounter_Floor3.SetActive(false);
+                    else if (i >= 12 && i < 16)
+                        SpecialCounter_Floor4.SetActive(false);
+
                     // 특수타일이 점령된 층의 다른 타일들이 다시 돌아가지 않게 셋팅하는 for 문
                     for (int j = (int)Mathf.Sqrt(16) * (m_TileList[i].GetComponent<Tile>().Get_Floor() - 1);
                         j < (Mathf.Sqrt(16) * (m_TileList[i].GetComponent<Tile>().Get_Floor() - 1)) + Mathf.Sqrt(16); ++j)
@@ -131,6 +172,24 @@ public class TileManager : MonoBehaviour {
                     m_TileList[i].GetComponent<Tile>().Set_Player_In(true);
                 else if (m_TileList[i].GetComponent<Tile>().Get_Player_In() == true && m_TriggerList[i].GetComponent<TriggerQuad>().Get_WhosTile() == 2)
                     m_TileList[i].GetComponent<Tile>().Set_Player_In(false);
+            }
+        }
+    }
+
+    void TileScore()
+    {
+        int tempScore = 0;
+        for (int i = 0; i < 16; i ++)
+        {            
+            if(m_TriggerList[i].GetComponent<TriggerQuad>().Get_WhosTile() == 2)
+            {
+                tempScore += 1;
+            }
+
+            if(i == 15)
+            {
+                m_iMoonScore = tempScore;
+                m_iSunScore = 16 - m_iMoonScore;
             }
         }
     }

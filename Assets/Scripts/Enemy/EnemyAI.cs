@@ -200,11 +200,11 @@ public class EnemyAI : MonoBehaviour {
     {
         if ( m_fDirection > 0 )
         {
-            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 135f, 0f));
         }
         else if ( m_fDirection < 0 )
         {
-            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+            this.transform.rotation = Quaternion.Euler(new Vector3(0f, 225f, 0f));
         }
         else if ( m_fDirection == 0 )
         {
@@ -283,6 +283,7 @@ public class EnemyAI : MonoBehaviour {
     // 1번 상태 : 좌우 움직임
     private void AI_1()
     {
+        walking = true;
         if (m_fDirection == 0f)
             m_fDirection = 0.1f;
 
@@ -307,7 +308,7 @@ public class EnemyAI : MonoBehaviour {
         if (m_bSetting_Complete == false)
         {
             m_fDirection = 0.0f;
-
+            walking = false;
             m_bSetting_Complete = true;
         }
 
@@ -347,6 +348,7 @@ public class EnemyAI : MonoBehaviour {
             else // 제자리
             { }
 
+            walking = true;
             m_bTrigger_is_Possible = true;
             m_bSetting_Complete = true;
 
@@ -393,6 +395,7 @@ public class EnemyAI : MonoBehaviour {
                 m_fDirection = -0.1f;
             }
 
+            walking = true;
             m_bTrigger_is_Possible = true;
             m_bSetting_Complete = true;
         }
@@ -472,6 +475,15 @@ public class EnemyAI : MonoBehaviour {
                     Debug.Log("Rotate");
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
+                else if (m_iEnemyFloor == 1 && m_fDirection < 0f) // 1층 울타리에서 오른쪽을 보고 탈 경우
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iEnemyFloor == 2 && m_fDirection > 0f)
+                {
+                    Debug.Log("Rotate");
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
                 m_bPortal_Setting_Complete = true;
             }
             Debug.Log("into_the_Fence");
@@ -532,6 +544,14 @@ public class EnemyAI : MonoBehaviour {
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
                 }
                 else if (m_iEnemyFloor == 4 && m_fDirection < 0f)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
+                else if (m_iEnemyFloor == 2 && m_fDirection < 0f) // 2층 터널에서 왼쪽을 보고 탈 경우
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iEnemyFloor == 4 && m_fDirection > 0f)
                 {
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
