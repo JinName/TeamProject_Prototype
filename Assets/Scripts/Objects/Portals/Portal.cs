@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour {
 
-    // 플레이어
-    PlayerController playerCtrl;
-    // Enemy
-    EnemyAI enemyAI;
-
     // 포탈의 층
     int m_PortalFloor;
     // 파트너 포탈의 층
@@ -40,9 +35,6 @@ public class Portal : MonoBehaviour {
 
     private void Awake()
     {
-        playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
-        enemyAI = GameObject.Find("Enemy").GetComponent<EnemyAI>();
-
         PortalFloor();
     }
 
@@ -58,6 +50,7 @@ public class Portal : MonoBehaviour {
             m_PortalFloor = 4;
     }
 
+    /*
     private void OnTriggerStay(Collider other)
     {
         if (other.name.Contains("Player") && playerCtrl.Get_usePortal() == false)
@@ -80,4 +73,5 @@ public class Portal : MonoBehaviour {
             }
         }
     }
+    */
 }

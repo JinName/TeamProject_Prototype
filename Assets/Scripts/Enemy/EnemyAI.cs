@@ -9,10 +9,10 @@ public class EnemyAI : MonoBehaviour {
 
     // AI 4가지 상태
     // 1 : 한층 좌우 돌아다님
-    // 2 : 가까운 포탈 이용 ( 적이 있는 층에 포탈 위치 받아와서 가까운곳 계산 )
-    // 몇층에 어떤 포탈이 있는지 정보를 가지고 있어야 함 -> portal manager 필요
-    // 3 :
+    // 2 : 가만히 좌우 두리번
+    // 3 : 가까운 포탈 이용 ( 적이 있는 층에 포탈 위치 받아와서 가까운곳 계산 )
     // 4 : 특수타일 점령 시 플레이어 있는 층으로
+    // 몇층에 어떤 포탈이 있는지 정보를 가지고 있어야 함 -> portal manager 필요
     private int m_iState_AI = 1; // 기본 상태
     List<int> stateList; // 리스트를 이용 상태 중복시 제거
     int m_iState_Count = 4; // 상태의 총 갯수
@@ -24,6 +24,7 @@ public class EnemyAI : MonoBehaviour {
 
     // 현재 적이 있는 층
     private int m_iEnemyFloor;
+    bool m_bTrigger_is_Possible = false;
 
     // 포탈 매니저 이용
     PortalManager m_Portal_Manager;
@@ -62,8 +63,25 @@ public class EnemyAI : MonoBehaviour {
     // 현재는 그냥 플레이어객체를 직접 받아옴
     PlayerController playerCtrl;
     bool Player_in_Special = false;
-    bool AI_Init = false;
     bool Setting_AI_4 = false;
+
+    bool m_bEnemyLock = false;
+    bool m_bEntering = false;
+    bool m_bReady_to_Teleport = false;
+    float m_fOffset_x = 0f;
+    bool m_bEnemy_use_Portal = false;
+    bool m_bPortal_Setting_Complete = false;
+
+    public bool Get_Ready_to_Teleport() { return m_bReady_to_Teleport; }
+    public void Set_Ready_to_Teleport(bool _bReady_to_Teleport) { m_bReady_to_Teleport = _bReady_to_Teleport; }
+
+    public bool Get_Enemy_Lock() { return m_bEnemyLock; }
+
+    public bool Get_Enemy_use_Portal() { return m_bEnemy_use_Portal; }
+    public void Set_Enemy_use_Portal(bool _bEnemy_use_Portal) { m_bEnemy_use_Portal = _bEnemy_use_Portal; }
+
+    public bool Get_Enter() { return m_bEntering; }
+    public void Set_Enter(bool _bEntering) { m_bEntering = _bEntering; }
 
     // 초기화
     private void Awake()
@@ -106,14 +124,17 @@ public class EnemyAI : MonoBehaviour {
         walking = true;
     }
 
-
     private void Update()
     {
-        Animating();
-        Turning();
+        if (m_bEnemyLock == false)
+        {
+            Animating();
+            Turning();
+
+            AI_Move();
+        }
+
         EnemyFloor();
-        AI_Move();
-        //AI_Portal_Cooltime();
     }
 
     // Enemy 의 현재 층
@@ -128,6 +149,9 @@ public class EnemyAI : MonoBehaviour {
         else if (this.transform.position.y > 7.5f && this.transform.position.y < 10.2f)
             m_iEnemyFloor = 4;
     }
+
+    // 트리거와 충돌 가능 상태인지
+    public bool Get_Trigger_is_Possible() { return m_bTrigger_is_Possible; }
 
     // 현재 층 반환
     public int Get_EnemyFloor() { return m_iEnemyFloor; }
@@ -154,9 +178,7 @@ public class EnemyAI : MonoBehaviour {
     {
         m_Animator.SetBool("IsWalking", walking);
     }
-
     
-
     // AI 포탈 쿨타임
     private void AI_Portal_Cooltime()
     {
@@ -209,7 +231,7 @@ public class EnemyAI : MonoBehaviour {
         // AI 가 중복되지않게 랜덤으로 선택
         if (m_bAI_On == false)
         {
-            //m_Portal_Manager.Reset_Portal_Useable();
+            m_Portal_Manager.Reset_Portal_Useable();
 
             int temp = Random.Range(0, stateList.Count);
             m_iState_AI = stateList[temp];
@@ -224,22 +246,22 @@ public class EnemyAI : MonoBehaviour {
 
         if (m_bAI_On == true)
         {
-            //if (m_iState_AI == 1)
-            //{
+            if (m_iState_AI == 1)
+            {
                 AI_1();
-            //}
-            //else if (m_iState_AI == 2)
-            //{
-            //    AI_2();
-            //}
-            //else if (m_iState_AI == 3)
-            //{
-            //    AI_3();
-            //}
-            //else if (m_iState_AI == 4)
-            //{
-            //    AI_4();
-            //}
+            }
+            else if (m_iState_AI == 2)
+            {
+                AI_2();
+            }
+            else if (m_iState_AI == 3)
+            {
+                AI_3();
+            }
+            else if (m_iState_AI == 4)
+            {
+                AI_4();
+            }
         }
     }
 
@@ -325,14 +347,19 @@ public class EnemyAI : MonoBehaviour {
             else // 제자리
             { }
 
+            m_bTrigger_is_Possible = true;
             m_bSetting_Complete = true;
+
+            Debug.Log("AI_3 Setting");
         }
 
         Move();
 
         if (usePortal == true)
         {
+            Debug.Log("Portal Complete");
             m_iState_AI = 1;
+            m_bTrigger_is_Possible = false;
             m_bSetting_Complete = false;
             usePortal = false;
         }
@@ -366,6 +393,7 @@ public class EnemyAI : MonoBehaviour {
                 m_fDirection = -0.1f;
             }
 
+            m_bTrigger_is_Possible = true;
             m_bSetting_Complete = true;
         }
 
@@ -373,9 +401,181 @@ public class EnemyAI : MonoBehaviour {
 
         if (usePortal == true)
         {
+            m_bTrigger_is_Possible = false;
             m_bSetting_Complete = false;
 
             usePortal = false;
+        }
+    }
+
+    // DoorAction
+    public void into_the_Door()
+    {
+        if (m_bEntering == true)
+        {
+            if (m_bPortal_Setting_Complete == false)
+            {
+                m_bEnemyLock = true;
+
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 360f, 0f));
+                m_bPortal_Setting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (this.transform.position.z >= 1.2f)
+            {
+                m_bPortal_Setting_Complete = false;
+                m_bReady_to_Teleport = true;
+                m_bEntering = false;
+            }
+        }
+    }
+    public void out_the_Door()
+    {
+        if (m_bEntering == false)
+        {
+            if (m_bPortal_Setting_Complete == false)
+            {
+                m_bReady_to_Teleport = false;
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+
+                m_bPortal_Setting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (this.transform.position.z <= m_fz)
+            {
+                m_bPortal_Setting_Complete = false;
+                m_bEnemyLock = false;
+            }
+        }
+    }
+
+    // FenceAction
+    public void into_the_Fence()
+    {
+        if (m_bEntering == true)
+        {
+            if (m_bPortal_Setting_Complete == false)
+            {
+                Debug.Log("Setting_Fence");
+                m_bEnemyLock = true;
+
+                if (m_iEnemyFloor == 1 && m_fDirection > 0f) // 1층 울타리에서 오른쪽을 보고 탈 경우
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iEnemyFloor == 2 && m_fDirection < 0f)
+                {
+                    Debug.Log("Rotate");
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
+                m_bPortal_Setting_Complete = true;
+            }
+            Debug.Log("into_the_Fence");
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (m_bReady_to_Teleport == true)
+            {
+                m_bEntering = false;
+                m_bPortal_Setting_Complete = false;
+            }
+        }
+    }
+    public void out_the_Fence()
+    {
+        if (m_bEntering == false)
+        {
+            if (m_bPortal_Setting_Complete == false)
+            {
+                m_fOffset_x = this.transform.position.x;
+                m_bReady_to_Teleport = false;
+                m_bPortal_Setting_Complete = true;
+                Debug.Log("이동 후 좌표 : " + m_fOffset_x.ToString());
+            }
+            Debug.Log("out_the_Fence");
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            Debug.Log("이동 후에 좌표 : " + m_fOffset_x.ToString());
+            if (m_fOffset_x >= max_x)
+            {
+                if (this.transform.position.x <= max_x)
+                {
+                    m_bEnemyLock = false;
+                    m_bPortal_Setting_Complete = false;
+                }
+            }
+            else if (m_fOffset_x <= min_x)
+            {
+                if (this.transform.position.x >= min_x)
+                {
+                    m_bEnemyLock = false;
+                    m_bPortal_Setting_Complete = false;
+                }
+            }
+        }
+    }
+
+    // TunnelAction
+    public void into_the_Tunnel()
+    {
+        if (m_bEntering == true)
+        {
+            if (m_bPortal_Setting_Complete == false)
+            {
+                m_bEnemyLock = true;
+
+                if (m_iEnemyFloor == 2 && m_fDirection > 0f) // 2층 터널에서 오른쪽을 보고 탈 경우
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                }
+                else if (m_iEnemyFloor == 4 && m_fDirection < 0f)
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                }
+                m_bPortal_Setting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (m_bReady_to_Teleport == true)
+            {
+                m_bEntering = false;
+                m_bPortal_Setting_Complete = false;
+            }
+        }
+    }
+    public void out_the_Tunnel()
+    {
+        if (m_bEntering == false)
+        {
+            if (m_bPortal_Setting_Complete == false)
+            {
+                m_fOffset_x = this.transform.position.x;
+                m_bReady_to_Teleport = false;
+                m_bPortal_Setting_Complete = true;
+            }
+
+            this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
+
+            if (m_fOffset_x >= max_x)
+            {
+                if (this.transform.position.x <= max_x)
+                {
+                    m_bEnemyLock = false;
+                    m_bPortal_Setting_Complete = false;
+                }
+            }
+            else if (m_fOffset_x <= min_x)
+            {
+                if (this.transform.position.x >= min_x)
+                {
+                    m_bEnemyLock = false;
+                    m_bPortal_Setting_Complete = false;
+                }
+            }
         }
     }
 }

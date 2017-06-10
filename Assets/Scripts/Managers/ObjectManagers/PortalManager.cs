@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PortalManager : MonoBehaviour {
 
-    bool m_bSetting_Complete = false;
+    bool m_bPlayer_Setting_Complete = false;
+    bool m_bEnemy_Setting_Complete = false;
     // 플레이어
     PlayerController playerCtrl;
     // Enemy
-    EnemyAI enemyAI;
+    EnemyAI m_Enemy;
     
     // 포탈
     GameObject m_Door;      // 문
@@ -25,6 +26,10 @@ public class PortalManager : MonoBehaviour {
     List<GameObject> m_Tunnel_Teleport_Trigger_List;
 
     // 포탈 리스트
+    // 0,1 : Door
+    // 2,3 : Fence
+    // 4,5 : Tunnel
+    // 6,7 : Blink
     List<GameObject> m_PortalList;
     List<GameObject> m_FenceList;
     List<GameObject> m_TunnelList;
@@ -36,7 +41,7 @@ public class PortalManager : MonoBehaviour {
     {
         // 플레이어
         playerCtrl = GameObject.Find("Player").GetComponent<PlayerController>();
-        enemyAI = GameObject.Find("Enemy").GetComponent<EnemyAI>();
+        m_Enemy = GameObject.Find("Enemy").GetComponent<EnemyAI>();
 
         m_PortalList = new List<GameObject>(); // 문
         m_FenceList = new List<GameObject>(); // 울타리
@@ -77,169 +82,409 @@ public class PortalManager : MonoBehaviour {
     // Door
     void Door_Check()
     {
-        if (playerCtrl.Get_Enter_Door() == false)
+        #region Player
+        if (playerCtrl.Get_Player_use_Portal() == true)
         {
-            for (int i = 0; i < 2; i++)
+            if (playerCtrl.Get_Enter() == false)
             {
-                if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Trigger_is_On() == true)
+                for (int i = 0; i < 2; i++)
                 {
-                    m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(true);
+                    if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Trigger_is_On() == true)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(true);
+                    }
+                    else
+                    {
+                        m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(false);
+                    }
+
+                    if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+                    {
+                        if (m_bPlayer_Setting_Complete == false)
+                        {
+                            playerCtrl.Set_Enter(true);
+                            m_bPlayer_Setting_Complete = true;
+                        }
+                    }
                 }
-                else
+            }
+            if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true ||
+                m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+            {
+                playerCtrl.into_the_Door();
+                if (playerCtrl.Get_Ready_to_Teleport() == true)
                 {
-                    m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(false);
+                    if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+                        playerCtrl.Set_PlayerPosition(m_PortalList[1].transform.position + new Vector3(0f, -0.6f, 1.5f));
+                    else if (m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+                        playerCtrl.Set_PlayerPosition(m_PortalList[0].transform.position + new Vector3(0f, -0.6f, 1.5f));
                 }
 
-                if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true)
+                playerCtrl.out_the_Door();
+
+                if (playerCtrl.Get_Player_Lock() == false)
                 {
-                    if (m_bSetting_Complete == false)
+                    for (int i = 0; i < 2; i++)
                     {
-                        playerCtrl.Set_Enter_Door(true);
-                        m_bSetting_Complete = true;
+                        m_PortalList[i].GetComponentInChildren<Door_Trigger>().Set_Switch(false);
+                        
+                        if (i == 1)
+                        {
+                            m_bPlayer_Setting_Complete = false;
+                            playerCtrl.Set_Player_use_Portal(false);
+                        }
                     }
                 }
             }
         }
-        if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true ||
-            m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true)
-        {
-            playerCtrl.into_the_Door();
-            if (playerCtrl.Get_Ready_to_Teleport() == true)
-            {
-                if(m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true)
-                    playerCtrl.Set_PlayerPosition(m_PortalList[1].transform.position + new Vector3(0f, -0.6f, 1.5f));
-                else if(m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Teleport_Switch() == true)
-                    playerCtrl.Set_PlayerPosition(m_PortalList[0].transform.position + new Vector3(0f, -0.6f, 1.5f));
-            }
-                
-            playerCtrl.out_the_Door();
+        #endregion
 
-            if (playerCtrl.Get_Player_Lock() == false)
+        #region Enemy
+        if(m_Enemy.Get_Enemy_use_Portal() == true)
+        {
+            if (m_Enemy.Get_Enter() == false)
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    m_PortalList[i].GetComponentInChildren<Door_Trigger>().Set_Teleport_Switch(false);
-                    m_bSetting_Complete = false;
+                    if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Trigger_is_On() == true)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(true);
+                    }
+                    else
+                    {
+                        m_PortalList[i].GetComponentInChildren<Door>().Set_Animation(false);
+                    }
+
+                    if (m_PortalList[i].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+                    {
+                        if (m_bEnemy_Setting_Complete == false)
+                        {
+                            m_Enemy.Set_Enter(true);
+                            m_bEnemy_Setting_Complete = true;
+                        }
+                    }
                 }
             }
-        }        
+            if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true ||
+                m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+            {
+                m_Enemy.into_the_Door();
+                if (m_Enemy.Get_Ready_to_Teleport() == true)
+                {
+                    if (m_PortalList[0].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+                        m_Enemy.Set_EnemyPosition(m_PortalList[1].transform.position + new Vector3(0f, -0.6f, 1.5f));
+                    else if (m_PortalList[1].GetComponentInChildren<Door_Trigger>().Get_Switch() == true)
+                        m_Enemy.Set_EnemyPosition(m_PortalList[0].transform.position + new Vector3(0f, -0.6f, 1.5f));
+                }
+
+                m_Enemy.out_the_Door();
+
+                if (m_Enemy.Get_Enemy_Lock() == false)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Door_Trigger>().Set_Switch(false);
+                        m_PortalList[i].GetComponentInChildren<Door_Trigger>().Set_Enemy_Used(true);
+
+                        if (i == 1)
+                        {
+                            m_bEnemy_Setting_Complete = false;
+                            m_Enemy.Set_Enemy_use_Portal(false);
+                            m_Enemy.Set_usePortal(true);
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
     }
 
     // Fence
     void Fence_Check()
     {
-        if (playerCtrl.Get_Enter_Door() == false)
+        #region Player
+        if (playerCtrl.Get_Player_use_Portal() == true)
         {
-            for(int i = 0; i < 2; i++)
+            if (playerCtrl.Get_Enter() == false)
             {
-                // 스위치 켜지면
-                if(m_FenceList[i].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+                for (int i = 2; i < 4; i++)
                 {
-                    if (m_bSetting_Complete == false)
+                    // 스위치 켜지면
+                    if (m_PortalList[i].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
                     {
-                        playerCtrl.Set_Enter_Door(true);
-                        m_bSetting_Complete = true;
+                        if (m_bPlayer_Setting_Complete == false)
+                        {
+                            playerCtrl.Set_Enter(true);
+                            m_bPlayer_Setting_Complete = true;
+                        }
+                    }
+                }
+            }
+
+            if (m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true ||
+                   m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+            {
+                playerCtrl.into_the_Fence();
+                if (playerCtrl.Get_Ready_to_Teleport() == true)
+                {
+                    if (m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
+                        playerCtrl.Set_PlayerPosition(m_Fence_Teleport_Trigger_List[1].transform.position);
+                    }
+                    else if (m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
+                        playerCtrl.Set_PlayerPosition(m_Fence_Teleport_Trigger_List[0].transform.position);
+                    }
+                }
+                playerCtrl.out_the_Fence();
+
+                if (playerCtrl.Get_Player_Lock() == false)
+                {
+                    for (int i = 2; i < 4; i++)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Fence_Trigger>().Set_Switch(false);
+
+                        if (i == 3)
+                        {
+                            m_bPlayer_Setting_Complete = false;
+                            playerCtrl.Set_Player_use_Portal(false);
+                        }
                     }
                 }
             }
         }
+        #endregion
 
-        if (m_FenceList[0].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true ||
-               m_FenceList[1].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+        #region Enemy
+        if (m_Enemy.Get_Enemy_use_Portal() == true)
         {
-            playerCtrl.into_the_Fence();
-            if (playerCtrl.Get_Ready_to_Teleport() == true)
+            if (m_Enemy.Get_Enter() == false)
             {
-                if (m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                for (int i = 2; i < 4; i++)
                 {
-                    m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
-                    playerCtrl.Set_PlayerPosition(m_Fence_Teleport_Trigger_List[1].transform.position);
-                }
-                else if (m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
-                {
-                    m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
-                    playerCtrl.Set_PlayerPosition(m_Fence_Teleport_Trigger_List[0].transform.position);
+                    // 스위치 켜지면
+                    if (m_PortalList[i].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
+                    {
+                        if (m_bEnemy_Setting_Complete == false)
+                        {
+                            m_Enemy.Set_Enter(true);
+                            m_bEnemy_Setting_Complete = true;
+                        }
+                    }
                 }
             }
-            playerCtrl.out_the_Fence();
 
-            if (playerCtrl.Get_Player_Lock() == false)
+            if (m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true ||
+                   m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Get_Switch() == true)
             {
-                for (int i = 0; i < 2; i++)
+                m_Enemy.into_the_Fence();
+                if (m_Enemy.Get_Ready_to_Teleport() == true)
                 {
-                    m_FenceList[i].GetComponentInChildren<Fence_Trigger>().Set_Switch(false);
-                    m_bSetting_Complete = false;
+                    if (m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
+                        m_Enemy.Set_EnemyPosition(m_Fence_Teleport_Trigger_List[1].transform.position);
+                    }
+                    else if (m_Fence_Teleport_Trigger_List[1].GetComponent<Fence_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Fence_Teleport_Trigger_List[0].GetComponent<Fence_Teleport_Trigger>().Set_Setting(true);
+                        m_Enemy.Set_EnemyPosition(m_Fence_Teleport_Trigger_List[0].transform.position);
+                    }
+                }
+                m_Enemy.out_the_Fence();
+
+                if (m_Enemy.Get_Enemy_Lock() == false)
+                {
+                    for (int i = 2; i < 4; i++)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Fence_Trigger>().Set_Switch(false);
+                        m_PortalList[i].GetComponentInChildren<Fence_Trigger>().Set_Enemy_Used(true);
+
+                        if (i == 3)
+                        {
+                            m_bEnemy_Setting_Complete = false;
+                            m_Enemy.Set_Enemy_use_Portal(false);
+                            m_Enemy.Set_usePortal(true);
+                        }
+                    }
                 }
             }
         }
+        #endregion
     }
 
     // Tunnel
     void Tunnel_Check()
     {
-        if (playerCtrl.Get_Enter_Door() == false)
+        #region Player
+        if (playerCtrl.Get_Player_use_Portal() == true)
         {
-            for (int i = 0; i < 2; i++)
+            if (playerCtrl.Get_Enter() == false)
             {
-                // 스위치 켜지면
-                if (m_TunnelList[i].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+                for (int i = 4; i < 6; i++)
                 {
-                    if (m_bSetting_Complete == false)
+                    // 스위치 켜지면
+                    if (m_PortalList[i].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
                     {
-                        Debug.Log("Setting");
-                        playerCtrl.Set_Enter_Door(true);
-                        m_bSetting_Complete = true;
+                        if (m_bPlayer_Setting_Complete == false)
+                        {
+                            Debug.Log("Setting");
+                            playerCtrl.Set_Enter(true);
+                            m_bPlayer_Setting_Complete = true;
+                        }
+                    }
+                }
+            }
+
+            if (m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true ||
+                   m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+            {
+                Debug.Log("true");
+
+                playerCtrl.into_the_Tunnel();
+                if (playerCtrl.Get_Ready_to_Teleport() == true)
+                {
+                    Debug.Log("Ready_to_Teleport");
+                    if (m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
+                        playerCtrl.Set_PlayerPosition(m_Tunnel_Teleport_Trigger_List[1].transform.position);
+                    }
+                    else if (m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
+                        playerCtrl.Set_PlayerPosition(m_Tunnel_Teleport_Trigger_List[0].transform.position);
+                    }
+                }
+                playerCtrl.out_the_Tunnel();
+
+                if (playerCtrl.Get_Player_Lock() == false)
+                {
+                    for (int i = 4; i < 6; i++)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Tunnel_Trigger>().Set_Switch(false);
+
+                        if (i == 5)
+                        {
+                            m_bPlayer_Setting_Complete = false;
+                            playerCtrl.Set_Player_use_Portal(false);
+                        }
                     }
                 }
             }
         }
+        #endregion
 
-        if (m_TunnelList[0].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true ||
-               m_TunnelList[1].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+        #region Enemy
+        if (m_Enemy.Get_Enemy_use_Portal() == true)
         {
-            Debug.Log("true");
-
-            playerCtrl.into_the_Tunnel();
-            if (playerCtrl.Get_Ready_to_Teleport() == true)
+            if (m_Enemy.Get_Enter() == false)
             {
-                Debug.Log("Ready_to_Teleport");
-                if (m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                for (int i = 4; i < 6; i++)
                 {
-                    m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
-                    playerCtrl.Set_PlayerPosition(m_Tunnel_Teleport_Trigger_List[1].transform.position);
-                }
-                else if (m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
-                {
-                    m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
-                    playerCtrl.Set_PlayerPosition(m_Tunnel_Teleport_Trigger_List[0].transform.position);
+                    // 스위치 켜지면
+                    if (m_PortalList[i].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
+                    {
+                        if (m_bEnemy_Setting_Complete == false)
+                        {
+                            Debug.Log("Setting");
+                            m_Enemy.Set_Enter(true);
+                            m_bEnemy_Setting_Complete = true;
+                        }
+                    }
                 }
             }
-            playerCtrl.out_the_Tunnel();
 
-            if (playerCtrl.Get_Player_Lock() == false)
+            if (m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true ||
+                   m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true)
             {
-                for (int i = 0; i < 2; i++)
+                Debug.Log("true");
+
+                m_Enemy.into_the_Tunnel();
+                if (m_Enemy.Get_Ready_to_Teleport() == true)
                 {
-                    m_TunnelList[i].GetComponentInChildren<Tunnel_Trigger>().Set_Switch(false);
-                    m_bSetting_Complete = false;
+                    Debug.Log("Ready_to_Teleport");
+                    if (m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
+                        m_Enemy.Set_EnemyPosition(m_Tunnel_Teleport_Trigger_List[1].transform.position);
+                    }
+                    else if (m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
+                    {
+                        m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
+                        m_Enemy.Set_EnemyPosition(m_Tunnel_Teleport_Trigger_List[0].transform.position);
+                    }
+                }
+                m_Enemy.out_the_Tunnel();
+
+                if (m_Enemy.Get_Enemy_Lock() == false)
+                {
+                    for (int i = 4; i < 6; i++)
+                    {
+                        m_PortalList[i].GetComponentInChildren<Tunnel_Trigger>().Set_Switch(false);
+                        m_PortalList[i].GetComponentInChildren<Tunnel_Trigger>().Set_Enemy_Used(true);
+
+                        if (i == 5)
+                        {
+                            m_bEnemy_Setting_Complete = false;
+                            m_Enemy.Set_Enemy_use_Portal(false);
+                            m_Enemy.Set_usePortal(true);
+                        }
+                    }
                 }
             }
         }
+        #endregion
     }
 
     // Blink
     void Blink_Check()
     {
-        if(m_BlinkList[0].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+        #region Player
+        if (playerCtrl.Get_Player_use_Portal() == true)
         {
-            playerCtrl.Set_PlayerPosition(m_BlinkList[1].transform.position);
-            m_BlinkList[0].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+            if (m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            {
+                playerCtrl.Set_PlayerPosition(m_PortalList[7].transform.position);
+                m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+                playerCtrl.Set_Player_use_Portal(false);
+            }
+            else if (m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            {
+                playerCtrl.Set_PlayerPosition(m_PortalList[6].transform.position);
+                m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+                playerCtrl.Set_Player_use_Portal(false);
+            }
         }
-        else if(m_BlinkList[1].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+        #endregion
+
+        #region Enemy
+        if (m_Enemy.Get_Enemy_use_Portal() == true)
         {
-            playerCtrl.Set_PlayerPosition(m_BlinkList[0].transform.position);
-            m_BlinkList[1].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+            if (m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            {
+                m_Enemy.Set_EnemyPosition(m_PortalList[7].transform.position);
+                m_Enemy.Set_Enemy_use_Portal(false);
+                m_Enemy.Set_usePortal(true);
+                m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+                m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
+                m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
+            }
+            else if (m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Get_Switch() == true)
+            {
+                m_Enemy.Set_EnemyPosition(m_PortalList[6].transform.position);
+                m_Enemy.Set_Enemy_use_Portal(false);
+                m_Enemy.Set_usePortal(true);
+                m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
+                m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
+                m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
+
+                Debug.Log("Enemy Blink!");
+            }
         }
+        #endregion
     }
 
     void createPortals()
@@ -248,31 +493,25 @@ public class PortalManager : MonoBehaviour {
         m_PortalClone = Instantiate(m_Door, new Vector3(m_Door.transform.position.x + 3f, m_Door.transform.position.y + 5.1f, m_Door.transform.position.z), Quaternion.identity);
         m_PortalList.Add(m_PortalClone); // 1
 
-        m_FenceList.Add(m_Fence); // 0
+        m_PortalList.Add(m_Fence); // 2
         m_PortalClone = Instantiate(m_Fence, new Vector3(m_Fence.transform.position.x + 5.8f, m_Fence.transform.position.y + 2.5f, m_Fence.transform.position.z), Quaternion.identity);
-        m_FenceList.Add(m_PortalClone); // 1
+        m_PortalList.Add(m_PortalClone); // 3
 
-        m_TunnelList.Add(m_Tunnel); // 0
+        m_PortalList.Add(m_Tunnel); // 4
         m_PortalClone = Instantiate(m_Tunnel, new Vector3(m_Fence.transform.position.x + 5.8f, m_Fence.transform.position.y + 7.6f, m_Fence.transform.position.z), Quaternion.identity);
-        m_TunnelList.Add(m_PortalClone); // 1
+        m_PortalList.Add(m_PortalClone); // 5
 
-        m_BlinkList.Add(m_Blink); // 0
+        m_PortalList.Add(m_Blink); // 6
         m_PortalClone = Instantiate(m_Blink, new Vector3(m_Blink.transform.position.x - 2.8f, m_Blink.transform.position.y + 2.5f, m_Blink.transform.position.z), Quaternion.identity);
-        m_BlinkList.Add(m_PortalClone); // 1
+        m_PortalList.Add(m_PortalClone); // 7
 
         //파트너 포탈 셋팅
-
-        /*
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            if( i < 4 )
-                m_PortalList[i].GetComponent<Portal>().Set_Partner_Portal_Floor(m_PortalList[i + 4].GetComponent<Portal>().Get_PortalFloor());
-            else if( i >= 4 )
-                m_PortalList[i].GetComponent<Portal>().Set_Partner_Portal_Floor(m_PortalList[i - 4].GetComponent<Portal>().Get_PortalFloor());
+            m_PortalList[i * 2].GetComponent<Portal>().Set_Partner_Portal_Floor(m_PortalList[i * 2 + 1].GetComponent<Portal>().Get_PortalFloor());
+            m_PortalList[i * 2 + 1].GetComponent<Portal>().Set_Partner_Portal_Floor(m_PortalList[i * 2].GetComponent<Portal>().Get_PortalFloor());
         }
-        */
     }
-
     
     void onPortalCheck()
     {
@@ -311,14 +550,14 @@ public class PortalManager : MonoBehaviour {
         {
             if (_portalNum > 3)
             {
-                enemyAI.Set_EnemyPosition(_portal[_portalNum - 4].transform.position);
+                m_Enemy.Set_EnemyPosition(_portal[_portalNum - 4].transform.position);
             }
             else
             {
-                enemyAI.Set_EnemyPosition(_portal[_portalNum + 4].transform.position);
+                m_Enemy.Set_EnemyPosition(_portal[_portalNum + 4].transform.position);
             }
 
-            enemyAI.Set_usePortal(true);
+            m_Enemy.Set_usePortal(true);
             //enemyAI.Set_AI_4_Setting(true);
             _portal[_portalNum].GetComponent<Portal>().Set_Enemy_Use(false);
         }
@@ -326,10 +565,14 @@ public class PortalManager : MonoBehaviour {
 
     public void Reset_Portal_Useable()
     {
-        for (int i = 0; i < m_iPortal_Count; ++i)
-        {
-            m_PortalList[i].GetComponent<Portal>().Set_Enemy_Use(false);
-        }
+        m_PortalList[0].GetComponentInChildren<Door_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[1].GetComponentInChildren<Door_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[2].GetComponentInChildren<Fence_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[3].GetComponentInChildren<Fence_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(false);
+        m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(false);
     }
 
     // AI 용 입력한 층과 같은 층에 있는 포탈 중 플레이어에게 갈 수 있는 포탈 있는지, 없으면 거리가 먼 포탈을 반환

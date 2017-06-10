@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour {
     delegate void DoorAction();
     DoorAction doorAction;
 
+    bool m_bPlayer_use_Portal = false;
+
     bool m_bReady_to_Teleport = false;
     bool m_bPlayerLock = false;
     bool m_bLets_Action = false;
@@ -24,7 +26,9 @@ public class PlayerController : MonoBehaviour {
     int m_iPlayer_Floor = 1;
     int m_iDirection = 0;
 
+    // 애니메이션 변수
     bool walking;
+    bool hit;
     bool usePortal;
 
     float coolTime;
@@ -55,11 +59,14 @@ public class PlayerController : MonoBehaviour {
     // 특수타일 카운터 스위치
     bool m_bSpecial_Counter = false;
 
+    public bool Get_Player_use_Portal() { return m_bPlayer_use_Portal; }
+    public void Set_Player_use_Portal(bool _bPlayer_use_Portal) { m_bPlayer_use_Portal = _bPlayer_use_Portal; }
+
     public bool Get_Player_Lock() { return m_bPlayerLock; }
     public void Set_Player_Lock(bool _bPlayer_Lock) { m_bPlayerLock = _bPlayer_Lock; }
 
-    public bool Get_Enter_Door() { return m_bEntering; }
-    public void Set_Enter_Door(bool _bEnter) { m_bEntering = _bEnter; }
+    public bool Get_Enter() { return m_bEntering; }
+    public void Set_Enter(bool _bEnter) { m_bEntering = _bEnter; }
 
     public bool Get_Ready_to_Teleport() { return m_bReady_to_Teleport; }
     public void Set_Ready_to_Teleport(bool _bReady_to_Teleport) { m_bReady_to_Teleport = _bReady_to_Teleport; }
@@ -91,10 +98,11 @@ public class PlayerController : MonoBehaviour {
             float m_h = Input.GetAxis("Horizontal");
             // 캐릭터 이동
             Move(m_h);
-            // 애니매이션
+            // move 애니매이션
             Animating(m_h);
         }
-
+        // 충돌 애니메이션
+        Collision_Animating();
 
         // 충돌시 밀림
         Player_Collision_Movement();
@@ -183,18 +191,23 @@ public class PlayerController : MonoBehaviour {
         {
             if (_h < 0f)
             {
-                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 225f, 0f));
                 m_iDirection = -1;
             }
             else if (_h > 0f)
             {
-                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+                this.transform.rotation = Quaternion.Euler(new Vector3(0f, 135f, 0f));
                 m_iDirection = 1;
             }
         }
         else
         {
         }
+    }
+
+    void Collision_Animating()
+    {
+        m_Animator.SetBool("isHit", hit);
     }
 
     // DoorAction
@@ -374,13 +387,16 @@ public class PlayerController : MonoBehaviour {
         if(m_bCollision == true)
         {
             m_bPlayerLock = true; // 플레이어 잠시 키입력 불가
+            hit = true; // hit 애니메이션
 
             m_PlayerRigidbody.AddForce(new Vector3(m_fCollision_Direction * m_fCollision_Power, 0f, 0f));
 
             m_fCollision_Power -= 3.0f;
+
             if(m_fCollision_Power < 0f)
             {
                 m_fCollision_Power = 0;
+                hit = false;
                 m_bCollision = false;
                 m_bPlayerLock = false;
             }

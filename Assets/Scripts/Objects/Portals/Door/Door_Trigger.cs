@@ -4,14 +4,27 @@ using UnityEngine;
 
 public class Door_Trigger : MonoBehaviour {
 
+    PlayerController m_Player;
+    EnemyAI m_Enemy;
+
     // 트리거 충돌시 포탈 스위치 on
     bool m_bPortal_is_On = false; // 애니매이션 셋팅용 스위치
     bool m_bLets_Teleport = false; // 이동용 스위치
 
+    bool m_bEnemy_Used = false;
+
+    public void Set_Enemy_Used(bool _bEnemy_Used) { m_bEnemy_Used = _bEnemy_Used; }
+
     public bool Get_Trigger_is_On() { return m_bPortal_is_On; }
 
-    public bool Get_Teleport_Switch() { return m_bLets_Teleport; }
-    public void Set_Teleport_Switch(bool _bTeleport) { m_bLets_Teleport = _bTeleport; }
+    public bool Get_Switch() { return m_bLets_Teleport; }
+    public void Set_Switch(bool _bTeleport) { m_bLets_Teleport = _bTeleport; }
+
+    private void Awake()
+    {
+        m_Player = GameObject.Find("Player").GetComponent<PlayerController>();
+        m_Enemy = GameObject.Find("Enemy").GetComponent<EnemyAI>();
+    }
 
 
     private void OnTriggerEnter(Collider other)
@@ -19,6 +32,15 @@ public class Door_Trigger : MonoBehaviour {
         if(other.name.Contains("Player"))
         {
             m_bPortal_is_On = true;
+        }
+        
+        if(other.name.Contains("Enemy") && m_Enemy.Get_Trigger_is_Possible())
+        {
+            if (m_bEnemy_Used == false)
+            {
+                m_bLets_Teleport = true;
+                m_Enemy.Set_Enemy_use_Portal(true);
+            }
         }
     }
 
@@ -29,6 +51,7 @@ public class Door_Trigger : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 m_bLets_Teleport = true;
+                m_Player.Set_Player_use_Portal(true);
             }
         }
     }
