@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/_Scenes/Title_Moon.unity
+- path: Assets/_Scenes/Prototype_ver_1.1.unity
   isLoaded: 1
   isActive: 1

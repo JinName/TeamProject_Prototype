@@ -34,11 +34,11 @@ public class Health : MonoBehaviour {
                 m_bSetting = true;
             }
         }
-
-        HP_Rotate();
-
+        
         if(m_bSetting == true)
         {
+            HP_Rotate();
+
             m_fRun_Time -= Time.deltaTime;            
 
             if(m_fRun_Time <= 0f)
@@ -55,7 +55,7 @@ public class Health : MonoBehaviour {
 
     void Follow_Player()
     {
-        this.transform.SetPositionAndRotation(new Vector3(m_Player.transform.position.x, m_Player.transform.position.y + 2.0f, -9.0f), Quaternion.identity);
+        this.transform.SetPositionAndRotation(new Vector3(m_Player.transform.position.x, m_Player.transform.position.y + 1.65f, -9.0f), Quaternion.identity);
     }
 
     void HP_Rotate()

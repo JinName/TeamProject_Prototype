@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
     GameObject ClearUI;
     GameObject FailUI;
 
+    bool m_bSetting = false;
+
     // 클리어 조건 셋팅, 판별
     TileManager m_TileManager;
     Health m_Health;
@@ -49,8 +51,11 @@ public class GameManager : MonoBehaviour {
     {
         AI_4_Switch();
 
-        Game_Win();
-        Game_Fail();
+        if (m_bSetting == false)
+        {
+            Game_Win();
+            Game_Fail();
+        }
     }
 
     private void AI_4_Switch()
@@ -70,6 +75,8 @@ public class GameManager : MonoBehaviour {
             GlobalManager.m_bGameClear = true;
 
             ClearUI.SetActive(true);
+
+            m_bSetting = true;
         }
     }
 
@@ -81,6 +88,8 @@ public class GameManager : MonoBehaviour {
             Time.timeScale = 0.0f;
 
             FailUI.SetActive(true);
+
+            m_bSetting = true;
         }
     }
 }
