@@ -294,7 +294,6 @@ public class PlayerController : MonoBehaviour {
         {
             if (m_bSetting_Complete == false)
             {
-                Debug.Log("Setting_Fence");
                 m_bPlayerLock = true;
 
                 if(m_iPlayer_Floor == 1 && m_iDirection == 1) // 1층 울타리에서 오른쪽을 보고 탈 경우
@@ -303,7 +302,6 @@ public class PlayerController : MonoBehaviour {
                 }
                 else if (m_iPlayer_Floor == 2 && m_iDirection == -1)
                 {
-                    Debug.Log("Rotate");
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
                 else if(m_iPlayer_Floor == 1 && m_iDirection == -1)
@@ -316,7 +314,6 @@ public class PlayerController : MonoBehaviour {
                 }
                     m_bSetting_Complete = true;
             }
-            Debug.Log("into_the_Fence");
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
 
             if (m_bReady_to_Teleport == true)
@@ -335,12 +332,9 @@ public class PlayerController : MonoBehaviour {
                 m_fOffset_x = this.transform.position.x;
                 m_bReady_to_Teleport = false;
                 m_bSetting_Complete = true;
-                Debug.Log("이동 후 좌표 : " + m_fOffset_x.ToString());
             }
-            Debug.Log("out_the_Fence");
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
-
-            Debug.Log("이동 후에 좌표 : " + m_fOffset_x.ToString());
+            
             if (m_fOffset_x >= max_x)
             {
                 if(this.transform.position.x <= max_x)
@@ -457,7 +451,7 @@ public class PlayerController : MonoBehaviour {
     {
         int temp = Random.Range(0, m_iFloor_Num_List.Count);
         int temp_newFloor = m_iFloor_Num_List[temp];
-        float temp_Pos_X = Random.Range(min_x + 0.5f, max_x - 0.4f);
+        float temp_Pos_X = Random.Range(min_x + 0.7f, max_x - 0.6f);
         float temp_Pos_Y = 0f;
 
 

@@ -351,15 +351,13 @@ public class EnemyAI : MonoBehaviour {
             walking = true;
             m_bTrigger_is_Possible = true;
             m_bSetting_Complete = true;
-
-            Debug.Log("AI_3 Setting");
+            
         }
 
         Move();
 
         if (usePortal == true)
         {
-            Debug.Log("Portal Complete");
             m_iState_AI = 1;
             m_bTrigger_is_Possible = false;
             m_bSetting_Complete = false;
@@ -463,7 +461,6 @@ public class EnemyAI : MonoBehaviour {
         {
             if (m_bPortal_Setting_Complete == false)
             {
-                Debug.Log("Setting_Fence");
                 m_bEnemyLock = true;
 
                 if (m_iEnemyFloor == 1 && m_fDirection > 0f) // 1층 울타리에서 오른쪽을 보고 탈 경우
@@ -472,7 +469,6 @@ public class EnemyAI : MonoBehaviour {
                 }
                 else if (m_iEnemyFloor == 2 && m_fDirection < 0f)
                 {
-                    Debug.Log("Rotate");
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
                 else if (m_iEnemyFloor == 1 && m_fDirection < 0f) // 1층 울타리에서 오른쪽을 보고 탈 경우
@@ -481,12 +477,10 @@ public class EnemyAI : MonoBehaviour {
                 }
                 else if (m_iEnemyFloor == 2 && m_fDirection > 0f)
                 {
-                    Debug.Log("Rotate");
                     this.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 }
                 m_bPortal_Setting_Complete = true;
             }
-            Debug.Log("into_the_Fence");
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
 
             if (m_bReady_to_Teleport == true)
@@ -505,12 +499,9 @@ public class EnemyAI : MonoBehaviour {
                 m_fOffset_x = this.transform.position.x;
                 m_bReady_to_Teleport = false;
                 m_bPortal_Setting_Complete = true;
-                Debug.Log("이동 후 좌표 : " + m_fOffset_x.ToString());
             }
-            Debug.Log("out_the_Fence");
             this.transform.Translate(transform.forward * 5f * Time.deltaTime, Space.World);
-
-            Debug.Log("이동 후에 좌표 : " + m_fOffset_x.ToString());
+            
             if (m_fOffset_x >= max_x)
             {
                 if (this.transform.position.x <= max_x)

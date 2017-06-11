@@ -15,6 +15,8 @@ public class Health : MonoBehaviour {
     float rot = 0f;
     float m_fSpeed = 200f;
 
+    public int Get_HP() { return m_iHP; }
+
     private void Awake()
     {
         m_Player = GameObject.Find("Player");
@@ -28,7 +30,7 @@ public class Health : MonoBehaviour {
         {
             if (m_bSetting == false)
             {               
-                this.transform.FindChild("HP_TileObj").gameObject.SetActive(true);
+                this.transform.Find("HP_TileObj").gameObject.SetActive(true);
                 m_bSetting = true;
             }
         }
@@ -44,7 +46,7 @@ public class Health : MonoBehaviour {
                 m_bSetting = false;
                 m_bHP_Rotate_Complete = false;
                 m_fRun_Time = 3.0f;
-                this.transform.FindChild("HP_TileObj").gameObject.SetActive(false);
+                this.transform.Find("HP_TileObj").gameObject.SetActive(false);
             }
         }
 
@@ -64,11 +66,11 @@ public class Health : MonoBehaviour {
 
             if (m_iHP == 3)
             {
-                this.transform.FindChild("HP_TileObj").FindChild("HP_Tile_1").gameObject.transform.eulerAngles = new Vector3(0f, rot, 0);
+                this.transform.Find("HP_TileObj").Find("HP_Tile_1").gameObject.transform.eulerAngles = new Vector3(0f, rot, 0);
 
                 if (rot >= 180)
                 {
-                    this.transform.FindChild("HP_TileObj").FindChild("HP_Tile_1").gameObject.transform.eulerAngles = new Vector3(0f, 180, 0);
+                    this.transform.Find("HP_TileObj").Find("HP_Tile_1").gameObject.transform.eulerAngles = new Vector3(0f, 180, 0);
                     rot = 0f;
                     m_iHP--;
                     m_bHP_Rotate_Complete = true;
@@ -76,11 +78,11 @@ public class Health : MonoBehaviour {
             }
             else if (m_iHP == 2)
             {
-                this.transform.FindChild("HP_TileObj").FindChild("HP_Tile_2").gameObject.transform.eulerAngles = new Vector3(0f, rot, 0);
+                this.transform.Find("HP_TileObj").Find("HP_Tile_2").gameObject.transform.eulerAngles = new Vector3(0f, rot, 0);
 
                 if (rot >= 180)
                 {
-                    this.transform.FindChild("HP_TileObj").FindChild("HP_Tile_2").gameObject.transform.eulerAngles = new Vector3(0f, 180, 0);
+                    this.transform.Find("HP_TileObj").Find("HP_Tile_2").gameObject.transform.eulerAngles = new Vector3(0f, 180, 0);
                     rot = 0f;
                     m_iHP--;
                     m_bHP_Rotate_Complete = true;
@@ -88,11 +90,11 @@ public class Health : MonoBehaviour {
             }
             else if (m_iHP == 1)
             {
-                this.transform.FindChild("HP_TileObj").FindChild("HP_Tile_3").gameObject.transform.eulerAngles = new Vector3(0f, rot, 0);
+                this.transform.Find("HP_TileObj").Find("HP_Tile_3").gameObject.transform.eulerAngles = new Vector3(0f, rot, 0);
 
                 if (rot >= 180)
                 {
-                    this.transform.FindChild("HP_TileObj").FindChild("HP_Tile_3").gameObject.transform.eulerAngles = new Vector3(0f, 180, 0);
+                    this.transform.Find("HP_TileObj").Find("HP_Tile_3").gameObject.transform.eulerAngles = new Vector3(0f, 180, 0);
                     rot = 0f;
                     m_iHP--;
                     m_bHP_Rotate_Complete = true;

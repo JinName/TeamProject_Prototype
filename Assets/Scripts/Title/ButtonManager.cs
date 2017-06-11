@@ -8,20 +8,43 @@ public class ButtonManager : MonoBehaviour {
     public void ChangeScene(string _strGameLevel)
     {
         SceneManager.LoadScene(_strGameLevel);
+        Time.timeScale = 1.0f;
     }
 
     //public void SceneChangeToMainMenu() { SceneManager.LoadScene("MainMenu"); }
+    
 
-    public void SceneChangeTogGameStart()
+    public void SceneChangeToGameStart()
     {
-        SceneManager.LoadScene("Prototype_ver_1.0");
+        if (GlobalManager.m_bTutorial_Check == false)
+        {
+            SceneManager.LoadScene("Tutorial");
+        }
+        else
+        {
+            SceneManager.LoadScene("Prototype_ver_1.1");
+        }
 
         Time.timeScale = 1.0f;
     }
 
+    public void SceneChangeToTitle()
+    {
+        if(GlobalManager.m_bGameClear == true)
+        {
+            SceneManager.LoadScene("Title_Moon");
+        }
+        else
+        {
+            SceneManager.LoadScene("Title");
+        }
+
+        Time.timeScale = 1.0f;        
+    }
+
     public void SceneChangeToMovie_g() { SceneManager.LoadScene("Movie_g"); }
 
-    public void SceneChangeToTitle() { SceneManager.LoadScene("Menu_Title"); }
+    
 
     public void SceneChangeGameIntro() { SceneManager.LoadScene("GameInrto"); }
 

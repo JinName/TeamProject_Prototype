@@ -6,11 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Scenes/StoryMovie.unity
+    guid: 924b2aaf68949684fa0fdc84eeb3a01e
+  - enabled: 1
     path: Assets/_Scenes/Title.unity
     guid: 1a173040112e624469458203315539cb
   - enabled: 1
+    path: Assets/_Scenes/Title_Moon.unity
+    guid: 04781d692555c6046be76f4bc3fe2754
+  - enabled: 1
+    path: Assets/_Scenes/Tutorial.unity
+    guid: eaa301d0d2de4aa4394f185a94f77d3f
+  - enabled: 1
     path: Assets/_Scenes/Prototype_ver_1.1.unity
     guid: d9c805276f71a3b4e98af51c5f84b31d
-  - enabled: 1
-    path: Assets/_Scenes/StoryMovie.unity
-    guid: 924b2aaf68949684fa0fdc84eeb3a01e

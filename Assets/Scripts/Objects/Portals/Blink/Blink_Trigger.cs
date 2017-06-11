@@ -34,7 +34,6 @@ public class Blink_Trigger : MonoBehaviour {
                 isPlayer = false;
                 m_Enemy.Set_Enemy_use_Portal(true);
             }
-            Debug.Log("Enemy In Blink Trigger");
         }
     }
 

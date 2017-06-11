@@ -324,7 +324,6 @@ public class PortalManager : MonoBehaviour {
                     {
                         if (m_bPlayer_Setting_Complete == false)
                         {
-                            Debug.Log("Setting");
                             playerCtrl.Set_Enter(true);
                             m_bPlayer_Setting_Complete = true;
                         }
@@ -335,12 +334,10 @@ public class PortalManager : MonoBehaviour {
             if ((m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == true)||
                    (m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == true))
             {
-                Debug.Log("true");
 
                 playerCtrl.into_the_Tunnel();
                 if (playerCtrl.Get_Ready_to_Teleport() == true)
                 {
-                    Debug.Log("Ready_to_Teleport");
                     if (m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
                     {
                         m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
@@ -380,7 +377,6 @@ public class PortalManager : MonoBehaviour {
                     {
                         if (m_bEnemy_Setting_Complete == false)
                         {
-                            Debug.Log("Setting");
                             m_Enemy.Set_Enter(true);
                             m_bEnemy_Setting_Complete = true;
                         }
@@ -391,12 +387,10 @@ public class PortalManager : MonoBehaviour {
             if ((m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[4].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == false) ||
                    (m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_Switch() == true && m_PortalList[5].GetComponentInChildren<Tunnel_Trigger>().Get_isPlayer() == false))
             {
-                Debug.Log("true");
 
                 m_Enemy.into_the_Tunnel();
                 if (m_Enemy.Get_Ready_to_Teleport() == true)
                 {
-                    Debug.Log("Ready_to_Teleport");
                     if (m_Tunnel_Teleport_Trigger_List[0].GetComponent<Tunnel_Teleport_Trigger>().Get_Teleport_Switch() == true)
                     {
                         m_Tunnel_Teleport_Trigger_List[1].GetComponent<Tunnel_Teleport_Trigger>().Set_Setting(true);
@@ -467,9 +461,7 @@ public class PortalManager : MonoBehaviour {
                 m_Enemy.Set_usePortal(true);
                 m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Switch(false);
                 m_PortalList[6].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
-                m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);
-
-                Debug.Log("Enemy Blink!");
+                m_PortalList[7].GetComponentInChildren<Blink_Trigger>().Set_Enemy_Used(true);                
             }
         }
         #endregion

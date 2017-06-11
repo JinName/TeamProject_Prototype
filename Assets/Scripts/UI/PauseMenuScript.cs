@@ -46,20 +46,18 @@ public class PauseMenuScript : MonoBehaviour {
 
 	public void RetryBt()
 	{
-		Debug.Log ("게임재시작");
 		Time.timeScale = 1.0f;
 		SceneManager.LoadScene("Prototype_ver_1.1");
 	}
 
 	public void QuitBt()
 	{
-		Debug.Log ("게임종료");
+        Time.timeScale = 1.0f;
         SceneManager.LoadScene("Title");
     }
 
     public void ExitGame()
     {
-        Debug.Log("게임종료");
         Application.Quit();
     }
 
@@ -77,6 +75,4 @@ public class PauseMenuScript : MonoBehaviour {
         // if 게임실패
         // SceneManager.LoadScene("EndingScene");
     }
-
-
 }

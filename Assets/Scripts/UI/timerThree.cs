@@ -22,7 +22,6 @@ public class timerThree : MonoBehaviour {
         {
             time -= Time.deltaTime;
             fillImg.fillAmount = time / timeAmt; 
-
         }
 		
 	}

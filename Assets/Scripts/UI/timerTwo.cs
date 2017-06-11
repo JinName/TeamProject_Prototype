@@ -9,6 +9,10 @@ public class timerTwo : MonoBehaviour {
     public float timeAmt = 60f;
     public float time;
 
+    bool m_bTime_Over = false;
+
+    public bool Get_Time_Over() { return m_bTime_Over; }
+
 	// Use this for initialization
 	void Start () {
        
@@ -24,6 +28,11 @@ public class timerTwo : MonoBehaviour {
         {
             time -= Time.deltaTime;
             fillImg.fillAmount = time / timeAmt;
+        }
+
+        if(time < 0)
+        {
+            m_bTime_Over = true;
         }
 
 	}

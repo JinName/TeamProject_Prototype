@@ -70,9 +70,9 @@ public class SpecialCounter : MonoBehaviour {
         m_bSetting_2 = false;
         m_bSetting_3 = false;
 
-        this.transform.FindChild("SpecialCounter_1").gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
-        this.transform.FindChild("SpecialCounter_2").gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
-        this.transform.FindChild("SpecialCounter_3").gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
+        this.transform.Find("SpecialCounter_1").gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
+        this.transform.Find("SpecialCounter_2").gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
+        this.transform.Find("SpecialCounter_3").gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
 
         rot = 0f;
         m_fCurrent_Time = 0f;
@@ -84,7 +84,7 @@ public class SpecialCounter : MonoBehaviour {
         {
             rot += m_fSpeed * Time.deltaTime;
 
-            this.transform.FindChild("SpecialCounter_1").gameObject.transform.eulerAngles = new Vector3(0, rot, 0);
+            this.transform.Find("SpecialCounter_1").gameObject.transform.eulerAngles = new Vector3(0, rot, 0);
 
             if(rot >= 180f)
             {
@@ -97,7 +97,7 @@ public class SpecialCounter : MonoBehaviour {
         {
             rot += m_fSpeed * Time.deltaTime;
 
-            this.transform.FindChild("SpecialCounter_2").gameObject.transform.eulerAngles = new Vector3(0, rot, 0);
+            this.transform.Find("SpecialCounter_2").gameObject.transform.eulerAngles = new Vector3(0, rot, 0);
 
             if (rot >= 180f)
             {
@@ -110,7 +110,7 @@ public class SpecialCounter : MonoBehaviour {
         {
             rot += m_fSpeed * Time.deltaTime;
 
-            this.transform.FindChild("SpecialCounter_3").gameObject.transform.eulerAngles = new Vector3(0, rot, 0);
+            this.transform.Find("SpecialCounter_3").gameObject.transform.eulerAngles = new Vector3(0, rot, 0);
 
             if (rot >= 180f)
             {
